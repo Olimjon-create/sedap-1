@@ -1,276 +1,219 @@
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import Head from "next/head";
-import {
-  CiBank,
-  CiCircleList,
-  CiChat1,
-  CiWallet,
-  CiCalendar,
-  CiForkAndKnife,
-  CiAlignBottom,
-  CiViewList,
-  CiUser,
-  CiStar,
-} from "react-icons/ci";
 import Image from "next/image";
 
-function Navigation(props) {
-  const router = useRouter();
+import {
+  IoHomeOutline,
+  IoReceiptOutline,
+  IoPeopleOutline,
+  IoBarChartOutline,
+  IoChatboxEllipsesOutline,
+  IoFastFoodOutline,
+  IoRestaurantOutline,
+  IoPersonCircleOutline,
+  IoCalendarOutline,
+  IoChatbubbleOutline,
+  IoWalletOutline,
+} from "react-icons/io5";
+import { FaListUl } from "react-icons/fa";
+
+function Navigation() {
+  const asideStyle = {
+    width: "349px",
+    height: "900px",
+    backgroundColor: "#ffffff",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    fontFamily: "Arial, sans-serif",
+    paddingTop: "58px",
+  };
+
+  const asideHeaderStyle = {
+    marginBottom: "58px",
+    textAlign: "center",
+    backgroundColor: "transparent",
+  };
+
+  const subtitleStyle = {
+    color: "#b9bbbd",
+    fontSize: "18px",
+    fontWeight: 400,
+  };
+
+  const buttonsMenuStyle = {
+    width: "100%",
+    display: "flex",
+    flexDirection: "column",
+    backgroundColor: "transparent",
+    padding: "0 20px",
+  };
 
   const links = [
-    {
-      id: 1,
-      linkName: "Dashboard",
-      icon: CiBank,
-      href: "/dashboard",
-    },
+    { id: 1, linkName: "Dashboard", linkImg: <IoHomeOutline />, href: "/" },
     {
       id: 2,
       linkName: "Order List",
-      icon: CiViewList,
-      href: "/orders",
+      linkImg: <FaListUl />,
+      href: "/OrderList",
+    },
+    {
+      id: 3,
+      linkName: "Order Detail",
+      linkImg: <IoReceiptOutline />,
+      href: "/OrderTop",
     },
     {
       id: 4,
       linkName: "Customers",
-      icon: CiUser,
+      linkImg: <IoPeopleOutline />,
       href: "/customers",
     },
     {
       id: 5,
       linkName: "Analytics",
-      icon: CiAlignBottom,
+      linkImg: <IoBarChartOutline />,
       href: "/analis",
     },
     {
       id: 6,
       linkName: "Review",
-      icon: CiStar,
-      href: "/review",
+      linkImg: <IoChatboxEllipsesOutline />,
+      href: "/ReviewsTop",
     },
     {
       id: 7,
       linkName: "Foods",
-      icon: CiForkAndKnife,
+      linkImg: <IoFastFoodOutline />,
       href: "/foods",
     },
     {
-      id: 7,
-      linkName: "Categories",
-      icon: CiCircleList,
-      href: "/categories",
+      id: 8,
+      linkName: "Food Detail",
+      linkImg: <IoRestaurantOutline />,
+      href: "/foodDetail",
+    },
+    {
+      id: 9,
+      linkName: "Customer Detail",
+      linkImg: <IoPersonCircleOutline />,
+      href: "/CustomerTop",
     },
     {
       id: 10,
       linkName: "Calendar",
-      icon: CiCalendar,
-      href: "/calendar",
+      linkImg: <IoCalendarOutline />,
+      href: "/OrderDetail",
     },
     {
       id: 11,
       linkName: "Chat",
-      icon: CiChat1,
+      linkImg: <IoChatbubbleOutline />,
       href: "/chat",
     },
     {
       id: 12,
       linkName: "Wallet",
-      icon: CiWallet,
+      linkImg: <IoWalletOutline />,
       href: "/wallet",
     },
   ];
 
   return (
-    <div>
-      <Head />
-      <aside
-        style={{
-          width: "345px",
-          backgroundColor: "white",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          fontFamily: "Barlow sans-serif",
-        }}
-      >
-        <div
-          style={{
-            marginTop: "58px",
-            marginBottom: "58px",
-            backgroundColor: "unset",
-          }}
-        >
+    <>
+      <Head>
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;700&display=swap"
+        />
+      </Head>
+      <aside style={asideStyle}>
+        <div style={asideHeaderStyle}>
           <Image
             src="/Sedap.png"
-            alt=""
-            style={{ backgroundColor: "unset" }}
+            alt="Sedap Logo"
             width={167}
             height={49}
+            style={{ backgroundColor: "transparent" }}
           />
-          <p
-            style={{
-              color: "#B9BBBD",
-              fontSize: "18px",
-              backgroundColor: "unset",
-            }}
-          >
-            Modern Admin Dashboard
-          </p>
+          <p style={subtitleStyle}>Modern Admin Dashboard</p>
         </div>
-        <div
-          style={{
-            width: "100%",
-            display: "flex",
-            flexDirection: "column",
-            backgroundColor: "unset",
-            position: "relative",
-          }}
-        >
-          {links.map(({ id, href, linkName, icon }) => {
-            const active = router.pathname.startsWith(href);
-            return (
-              <CustomLink
-                key={id}
-                linkName={linkName}
-                icon={icon}
-                href={href}
-                active={active}
-              />
-            );
-          })}
-        </div>
-        <div
-          style={{
-            width: "260px",
-            marginTop: "89px",
-            display: "flex",
-            padding: "20px",
-            backgroundColor: "#00b074",
-            borderRadius: "10px",
-          }}
-        >
-          <div
-            style={{
-              width: "140px",
-              backgroundColor: "unset",
-            }}
-          >
-            <p
-              style={{
-                width: "140px",
-                fontSize: "12px",
-                color: "white",
-                backgroundColor: "unset",
-              }}
-            >
-              Please, organize your menus through button bellow!
-            </p>
-            <button
-              style={{
-                width: "116px",
-                height: "37px",
-                color: "#464255",
-                fontSize: "15px",
-                backgroundColor: "#f2f5f3",
-                border: "none",
-                borderRadius: "5px",
-                marginTop: "8px",
-                cursor: "pointer",
-              }}
-            >
-              +Add Menus
-            </button>
-          </div>
-          <Image src="/illustration.png" width={77} height={91} alt="grand" />
-        </div>
-        <div
-          style={{
-            width: "245px",
-            backgroundColor: "unset",
-            marginTop: "59px",
-            marginBottom: "43px",
-          }}
-        >
-          <p
-            style={{
-              backgroundColor: "unset",
-              color: "#515151",
-              fontSize: "12px",
-              marginBottom: "5px",
-            }}
-          >
-            Sedap Restaurant Admin Dashboard
-          </p>
-          <p
-            style={{
-              backgroundColor: "unset",
-              color: "#969ba0",
-              fontSize: "12px",
-              fontWeight: "400px",
-            }}
-          >
-            © 2020 All Rights Reserved
-          </p>
-          <p
-            style={{
-              backgroundColor: "unset",
-              color: "#969ba0",
-              fontSize: "14px",
-              marginTop: "15px",
-            }}
-          >
-            Made with ♥ by Peterdraw
-          </p>
+        <div style={buttonsMenuStyle}>
+          {links.map(({ id, href, linkName, linkImg }) => (
+            <NavLink
+              key={id}
+              linkName={linkName}
+              linkImg={linkImg}
+              href={href}
+            />
+          ))}
         </div>
       </aside>
-      {/* <Section/> */}
-    </div>
+    </>
   );
 }
 
-function CustomLink(props) {
-  const { linkName, icon: Icon, href, active } = props;
+function NavLink({ linkName, linkImg, href }) {
+  const router = useRouter();
+  const isActive = router.asPath === href;
+  const [isHovered, setIsHovered] = useState(false);
+
+  const baseStyle = {
+    textDecoration: "none",
+    color: "#000",
+    width: "100%",
+    height: "54px",
+    display: "flex",
+    alignItems: "center",
+    borderRadius: "8px",
+    fontWeight: 500,
+    fontSize: "16px",
+    paddingLeft: "30px",
+    position: "relative",
+    backgroundColor: isActive
+      ? "rgba(255, 255, 255, 0.3)"
+      : isHovered
+      ? "#00B074"
+      : "transparent",
+    transition: "0.3s ease",
+    cursor: isHovered ? "pointer" : "default",
+  };
+
+  const iconStyle = {
+    marginRight: "20px",
+    fontSize: "20px",
+  };
+
+  const textStyle = {
+    flex: 1,
+  };
+
+  const activeBefore = {
+    content: '""',
+    display: "block",
+    width: "8px",
+    height: "100%",
+    backgroundColor: "#ffffff",
+    position: "absolute",
+    left: 0,
+    top: 0,
+    borderRadius: "4px",
+  };
+
   return (
-    <div style={{ position: "relative", width: "250px", margin: "0 auto" }}>
-      {active && (
-        <div
-          style={{
-            content: "''",
-            position: "absolute",
-            left: "-20%",
-            width: "8px",
-            height: "100%",
-            backgroundColor: "#00b074",
-            borderRadius: "4px",
-          }}
-        ></div>
-      )}
-      <Link
-        href={href}
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "20px",
-          background: active ? "#00B07426" : "",
-          color: active ? "#177556" : "",
-          padding: "12px 20px",
-          borderRadius: "12px",
-          textDecoration: "none",
-          fontWeight: 500,
-          position: "relative",
-        }}
+    <Link href={href} passHref legacyBehavior>
+      <a
+        style={baseStyle}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
       >
-        <Icon
-          style={{
-            fontSize: "25px",
-            color: active ? "#00B074" : "#B9BBBD",
-          }}
-        />
-        {linkName}
-      </Link>
-    </div>
+        {isActive && <span style={activeBefore}></span>}
+        <span style={iconStyle}>{linkImg}</span>
+        <span style={textStyle}>{linkName}</span>
+      </a>
+    </Link>
   );
 }
 

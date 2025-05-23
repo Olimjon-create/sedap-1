@@ -6,21 +6,34 @@ import { useEffect } from "react";
 
 export default function Dashboard() {
   let user = null;
+
   if (typeof window !== "undefined") {
-    user = localStorage.getItem("user");
-    user = user ? JSON.parse(user) : null;
+    const storedUser = localStorage.getItem("user");
+    if (storedUser && storedUser !== "undefined") {
+      try {
+        user = JSON.parse(storedUser);
+      } catch (e) {
+        console.error("Userni parse qilishda xato:", e);
+        user = null;
+      }
+    }
   }
 
-  const [restaurants, isresLoading, refetchres] = useFetchApiItems("/restaurants", {
-    filters: {
-      key: "users",
-      users: {
-        documentId: user?.documentId,
+  const [restaurants, isResLoading, refetchRes] = useFetchApiItems(
+    "/restaurants",
+    {
+      filters: {
+        key: "users",
+        users: {
+          documentId: user?.documentId,
+        },
       },
-    },
-  });
+    }
+  );
 
-  filtersTest = [
+  const foundRestaurant = restaurants[0] ?? null;
+
+  const filtersTest = [
     {
       key: "[restaurant][documentId]",
       operator: "[$eqi]",
@@ -33,15 +46,11 @@ export default function Dashboard() {
       value: "hello",
       required: false,
     },
-  ]`/categories?filters${filtersTest.key}${filtersTest.operator}=${filtersTest.value}`;
+  ];
 
   const data1 = filtersTest
-    .map((filter) => {
-      return filter.key + filter.operator + "=" + filter.value;
-    })
+    .map((filter) => filter.key + filter.operator + "=" + filter.value)
     .join("&");
-
-  const foundRestaurant = restaurants[0] ?? null;
 
   const [categories, isLoading, fetcher, realRefetch] = useFetchApiItems();
 
@@ -54,65 +63,78 @@ export default function Dashboard() {
   }, [foundRestaurant]);
 
   const handleCreateCategory = (res) => {
-    if (res.documentId) {
+    if (res?.documentId) {
       console.log("res", res);
       const values = {
         data: {
           name: "Burger",
           description: "Burger desc",
-          internalName: "OlimjonRes_Burger",
-          restaurant: res.documentId, // res.documentId
+          internalName: "OlimjonXamraqulovRes_Burger",
+          restaurant: res.documentId,
         },
       };
 
-      const options = {
+      fetch("http://192.168.100.113:1337/api/categories", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(values),
-      };
-      fetch("http://192.168.100.84:1337/api/categories", options)
+      })
         .then((response) => response.json())
         .then((res) => {
-          console.log(res);
+          console.log("Category yaratildi:", res);
         })
-        .catch((error) => console.error(error));
+        .catch((error) => console.error("Category yaratishda xato:", error));
+    } else {
+      console.warn("Restoran documentId mavjud emas!");
     }
   };
 
   const handleCreateType = (cats) => {
     const firstCat = cats[1] ?? null;
-    if (firstCat) {
+    if (firstCat?.documentId) {
       const values = {
         data: {
-          name: "ilik shorva",
-          category: firstCat.documentId, // res.documentId
+          name: "non",
+          category: firstCat.documentId,
         },
       };
 
-      const options = {
+      fetch("http://192.168.100.113:1337/api/types", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(values),
-      };
-      fetch("http://192.168.100.84:1337/api/types", options)
+      })
         .then((response) => response.json())
         .then((res) => {
-          console.log(res);
+          console.log("Type yaratildi:", res);
         })
-        .catch((error) => console.error(error));
+        .catch((error) => console.error("Type yaratishda xato:", error));
+    } else {
+      console.warn("Kategoriya documentId mavjud emas!");
     }
   };
 
   return (
     <>
-      <Head />
+      <Head>
+        <title>Dashboard</title>
+      </Head>
       <div>
-        <button onClick={() => handleCreateCategory(foundRestaurant)}>Create Category</button>
-        <button onClick={() => handleCreateType(categories)}>Create type</button>
+        <button
+          style={{
+            cursor: "pointer",
+          }}
+          onClick={() => handleCreateCategory(foundRestaurant)}
+        >
+          Create Category
+        </button>
+        <button onClick={() => handleCreateType(categories)}>
+          Create type
+        </button>
         <Image src="/dashboard.png" width={1460} height={1544} alt="back" />
       </div>
     </>

@@ -13,6 +13,7 @@ import {
 import useFetchApiItems from "@/hooks/useFetchApiItems";
 import { useState } from "react";
 import { useRouter } from "next/router";
+import useCurrentUser from "@/hooks/useCurrentUser";
 
 function FoodForm({ title, food, btnText }) {
   const router = useRouter();
@@ -20,18 +21,8 @@ function FoodForm({ title, food, btnText }) {
   const [formData, setFormData] = useState(null);
   const [category, setCategory] = useState("");
 
-  let user = null;
-  if (typeof window !== "undefined") {
-    user = localStorage.getItem("user");
-    user = user ? JSON.parse(user) : null;
-  }
-
-  const [restaurants, isresLoading, refetchres] = useFetchApiItems(
-    `/restaurants?filters[users][documentId][$eqi]=${user?.documentId}`
-  );
-
-  const foundRestaurant = restaurants[0] ?? null;
-
+  const { user } = useCurrentUser();
+  console.log(user);
   useEffect(() => {
     if (food) {
       setFormData({
@@ -57,8 +48,8 @@ function FoodForm({ title, food, btnText }) {
   };
 
   const [categories, isLoading] = useFetchApiItems(
-    foundRestaurant
-      ? `/categories?filters[restaurant][documentId][$eq]=${foundRestaurant.documentId}`
+    user.restaurant
+      ? `/categories?filters[restaurant][documentId][$eq]=${user.restaurant.documentId}`
       : null
   );
 
@@ -80,12 +71,11 @@ function FoodForm({ title, food, btnText }) {
         type: {
           connect: [formData.type],
         },
-        restaurant: foundRestaurant?.documentId ?? null,
+        restaurant: user.restaurant?.documentId ?? null,
       },
     };
 
     if (formData.documentId) {
-      // update
       const options = {
         method: "PUT",
         headers: {
@@ -94,7 +84,7 @@ function FoodForm({ title, food, btnText }) {
         body: JSON.stringify(values),
       };
       fetch(
-        `http://192.168.100.84:1337/api/foods/${formData.documentId}`,
+        `http://192.168.100.113:1337/api/foods/${formData.documentId}`,
         options
       )
         .then((response) => response.json())
@@ -105,7 +95,6 @@ function FoodForm({ title, food, btnText }) {
         .catch((error) => console.error(error));
     } else {
       if (values.data.restaurant) {
-        // create
         const options = {
           method: "POST",
           headers: {
@@ -113,7 +102,7 @@ function FoodForm({ title, food, btnText }) {
           },
           body: JSON.stringify(values),
         };
-        fetch("http://192.168.100.84:1337/api/foods", options)
+        fetch("http://192.168.100.113:1337/api/foods", options)
           .then((response) => response.json())
           .then((res) => {
             console.log(res);
@@ -317,7 +306,6 @@ function FoodForm({ title, food, btnText }) {
             />
           </Grid>
 
-          {/* Submit Button */}
           <Grid item xs={12}>
             <Button
               type="submit"
