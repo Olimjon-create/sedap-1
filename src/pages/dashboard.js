@@ -3,35 +3,23 @@ import Image from "next/image";
 import MainLayout from "@/components/common/layouts/MainLayout";
 import useFetchApiItems from "@/hooks/useFetchApiItems";
 import { useEffect } from "react";
+import useCurrent from "@/hooks/useCurrent";
 
 export default function Dashboard() {
   let user = null;
-
   if (typeof window !== "undefined") {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser && storedUser !== "undefined") {
-      try {
-        user = JSON.parse(storedUser);
-      } catch (e) {
-        console.error("Userni parse qilishda xato:", e);
-        user = null;
-      }
-    }
+    user = localStorage.getItem("user");
+    user = user ? JSON.parse(user) : null;
   }
 
-  const [restaurants, isResLoading, refetchRes] = useFetchApiItems(
-    "/restaurants",
-    {
-      filters: {
-        key: "users",
-        users: {
-          documentId: user?.documentId,
-        },
+  const [restaurants, isresLoading, refetchres] = useFetchApiItems("/restaurants", {
+    filters: {
+      key: "users",
+      users: {
+        documentId: user?.documentId,
       },
-    }
-  );
-
-  const foundRestaurant = restaurants[0] ?? null;
+    },
+  });
 
   const filtersTest = [
     {
@@ -80,7 +68,8 @@ export default function Dashboard() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(values),
-      })
+      };
+      fetch("http://192.168.100.84:1337/api/categories", options)
         .then((response) => response.json())
         .then((res) => {
           console.log("Category yaratildi:", res);
@@ -107,7 +96,8 @@ export default function Dashboard() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(values),
-      })
+      };
+      fetch("http://192.168.100.84:1337/api/types", options)
         .then((response) => response.json())
         .then((res) => {
           console.log("Type yaratildi:", res);
@@ -124,17 +114,8 @@ export default function Dashboard() {
         <title>Dashboard</title>
       </Head>
       <div>
-        <button
-          style={{
-            cursor: "pointer",
-          }}
-          onClick={() => handleCreateCategory(foundRestaurant)}
-        >
-          Create Category
-        </button>
-        <button onClick={() => handleCreateType(categories)}>
-          Create type
-        </button>
+        <button onClick={() => handleCreateCategory(foundRestaurant)}>Create Category</button>
+        <button onClick={() => handleCreateType(categories)}>Create type</button>
         <Image src="/dashboard.png" width={1460} height={1544} alt="back" />
       </div>
     </>

@@ -9,6 +9,7 @@ import FoodSearch from "@/components/pages/foods/FoodSearch";
 import FoodBtn from "@/components/pages/foods/FoodBtn";
 import NewBtn from "@/components/pages/foods/NewBtn";
 import useFetchApiItems from "@/hooks/useFetchApiItems";
+import useCurrent from "@/hooks/useCurrent";
 
 export default function Foods() {
   const [searchValue, setSearchValue] = useState("");
@@ -28,17 +29,6 @@ export default function Foods() {
 
   // populate[type][populate][0]=category
 
-  const [user, setUser] = useState(null);
-  console.log("sssssssssssssss", user);
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const storedUser = localStorage.getItem("user");
-      if (storedUser) {
-        setUser(JSON.parse(storedUser));
-      }
-    }
-  }, []);
-
   // eski
 
   // const [restaurants, isresLoading, refetchres] = useFetchApiItems(
@@ -49,6 +39,9 @@ export default function Foods() {
 
   // yangi
 
+  const user = useCurrent();
+
+  console.log("uuuuuuuuuuuuuuuuuuuuuuuuuuu", user);
   const [restaurants, isresLoading, refetchres] = useFetchApiItems(
     "/restaurants",
     user && {
@@ -69,7 +62,7 @@ export default function Foods() {
   //   description: '',
   //   internalName: '',
   //   restaurant: foundRestaurant.documentId,
-  // }
+  // // }
 
   console.log("foundRestaurant", foundRestaurant);
 
