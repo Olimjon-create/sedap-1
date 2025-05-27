@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import useFetchApiItems from "./useFetchApiItems";
+import useFetchApiItem from "./useFetchApiItem";
 
 function useCurrent() {
   const [user, setUser] = useState(null);
 
-  const [restaurants] = useFetchApiItems(
+  const [restaurants] = useFetchApiItem(
     "/restaurants",
     user && {
       filters: {

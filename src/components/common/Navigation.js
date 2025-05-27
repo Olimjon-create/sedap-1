@@ -13,6 +13,7 @@ import {
   CiViewList,
   CiUser,
   CiStar,
+  CiCircleMinus,
 } from "react-icons/ci";
 import Image from "next/image";
 
@@ -61,6 +62,12 @@ function Navigation(props) {
       linkName: "Categories",
       icon: CiCircleList,
       href: "/categories",
+    },
+    {
+      id: 7,
+      linkName: "Types",
+      icon: CiCircleList,
+      href: "/types",
     },
     {
       id: 10,

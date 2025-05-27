@@ -21,6 +21,7 @@ export default async function signIn(param, data) {
         // Handle error.
         console.log("An error occurred:", error.response);
       });
+
     return data;
   } catch (err) {
     console.error("res err: ", err);
