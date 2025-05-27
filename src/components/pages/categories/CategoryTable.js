@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import useCurrent from "@/hooks/useCurrent";
+import useCurrent from "@/hooks/useCurrentUser";
 import useFetchApiItems from "@/hooks/useFetchApiItems";
 import CustomBtnFood from "@/components/pages/foods/CustomBtnFood";
 import {
@@ -17,8 +17,9 @@ import {
   DialogTitle,
 } from "@mui/material";
 
-function CategoryTable() {
+function CategoryTable({ setDialogState, handleChange, handleSubmit }) {
   const user = useCurrent();
+  console.log(user);
 
   const [form, setForm] = useState({
     documentId: null,
@@ -26,18 +27,18 @@ function CategoryTable() {
     description: "",
   });
 
-  const [foundRestaurant, setFoundRestaurant] = useState(null);
+  // const [foundRestaurant, setFoundRestaurant] = useState(null);
 
   const [categories, isLoading, refetchCategories] = useFetchApiItems(
-    foundRestaurant
-      ? `/categories?filters[restaurant][documentId][$eq]=${foundRestaurant.documentId}`
+    user?.restaurantId
+      ? `/categories?filters[restaurant][documentId][$eq]=${user?.restaurantId}`
       : null
   );
 
-  const [dialogState, setDialogState] = useState({
-    open: false,
-    categoryId: null,
-  });
+  // const [dialogState, setDialogState] = useState({
+  //   open: false,
+  //   categoryId: null,
+  // });
 
   const handleDelete = (categoryId) => {
     if (categoryId) {
@@ -60,11 +61,11 @@ function CategoryTable() {
     }
   };
 
-  useEffect(() => {
-    if (user?.restaurants?.length > 0) {
-      setFoundRestaurant(user.restaurants[0]);
-    }
-  }, [user]);
+  // useEffect(() => {
+  //   if (user?.restaurantId) {
+  //     setFoundRestaurant(user.restaurants[0]);
+  //   }
+  // }, [user]);
 
   const [editCategory, setEditCategory] = useState(null);
 

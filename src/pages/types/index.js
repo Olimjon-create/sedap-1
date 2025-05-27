@@ -18,7 +18,7 @@ import {
 } from "@mui/material";
 import TypeTable from "@/components/pages/types/TypeTable";
 import axios from "axios";
-import useCurrent from "@/hooks/useCurrent";
+import useCurrent from "@/hooks/useCurrentUser";
 import useFetchApiItems from "@/hooks/useFetchApiItems";
 import CustomBtnFood from "@/components/pages/foods/CustomBtnFood";
 import TypeForm from "@/components/pages/types/TypeForm";

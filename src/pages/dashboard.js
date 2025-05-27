@@ -3,7 +3,7 @@ import Image from "next/image";
 import MainLayout from "@/components/common/layouts/MainLayout";
 import useFetchApiItems from "@/hooks/useFetchApiItems";
 import { useEffect } from "react";
-import useCurrent from "@/hooks/useCurrent";
+import useCurrent from "@/hooks/useCurrentUser";
 
 export default function Dashboard() {
   const user = useCurrent();

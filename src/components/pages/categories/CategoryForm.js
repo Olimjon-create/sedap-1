@@ -7,6 +7,8 @@ import {
   CircularProgress,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import useCurrentUser from "@/hooks/useCurrentUser";
+import useCategory from "@/hooks/useCategory";
 
 export default function CategoryForm({
   editCategory,
@@ -15,13 +17,26 @@ export default function CategoryForm({
   onSuccess,
   refetchCategories,
 }) {
+  const [handleCreateCategory] = useCategory();
   const [form, setForm] = useState({
-    documentId: null,
     name: "",
     description: "",
   });
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    handleCreateCategory(form);
+  };
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const user = useCurrentUser();
 
   useEffect(() => {
     if (editCategory) {
@@ -39,17 +54,12 @@ export default function CategoryForm({
     }
   }, [editCategory]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-  };
-
   const validateForm = () => {
     if (!form.name.trim()) {
       setError("Category nomi kerak");
       return false;
     }
-    if (!foundRestaurant) {
+    if (!user.restaurantId) {
       setError("Restoran topilmadi");
       return false;
     }
@@ -106,51 +116,51 @@ export default function CategoryForm({
   };
 
   return (
-    <Box sx={{ mb: 4 }}>
-      <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2 }}>
-        <TextField
-          label="Category nomi"
-          name="name"
-          value={form.name}
-          onChange={handleChange}
-          sx={{ flexGrow: 1, minWidth: 200 }}
-          disabled={loading}
-        />
-        <TextField
-          label="Category ta'rifi"
-          name="description"
-          value={form.description}
-          onChange={handleChange}
-          sx={{ flexGrow: 2, minWidth: 300 }}
-          disabled={loading}
-        />
-      </Box>
+    <form onSubmit={handleSubmit}>
+      <Box sx={{ mb: 4 }}>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2 }}>
+          <TextField
+            label="Category nomi"
+            name="name"
+            value={form.name}
+            onChange={handleChange}
+            sx={{ flexGrow: 1, minWidth: 200 }}
+            disabled={loading}
+          />
+          <TextField
+            label="Category ta'rifi"
+            name="description"
+            value={form.description}
+            onChange={handleChange}
+            sx={{ flexGrow: 2, minWidth: 300 }}
+            disabled={loading}
+          />
+        </Box>
 
-      {error && <Box sx={{ color: "error.main", mb: 1 }}>{error}</Box>}
+        {error && <Box sx={{ color: "error.main", mb: 1 }}>{error}</Box>}
 
-      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-        <Button
-          variant="contained"
-          color={form.documentId ? "warning" : "primary"}
-          onClick={saveCategory}
-          disabled={loading}
-          sx={{ minWidth: 120 }}
-        >
-          {loading ? (
-            <CircularProgress size={24} color="inherit" />
-          ) : form.documentId ? (
-            "Yangilash"
-          ) : (
-            "Qo'shish"
-          )}
-        </Button>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <Button
+            variant="contained"
+            color={form.documentId ? "warning" : "primary"}
+            onClick={handleSubmit}
+            disabled={loading}
+            sx={{ minWidth: 120 }}
+          >
+            {loading ? (
+              <CircularProgress size={24} color="inherit" />
+            ) : (
+              "Qo'shish"
+            )}
+          </Button>
 
-        {form.documentId && (
+          {/* {form.documentId && (
           <IconButton color="error" onClick={onCancel} disabled={loading}>
-            <CloseIcon />
+          <CloseIcon />
           </IconButton>
-        )}
+        )} */}
+        </Box>
       </Box>
-    </Box>
+    </form>
   );
 }

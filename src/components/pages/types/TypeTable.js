@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import useCurrent from "@/hooks/useCurrent";
+import useCurrent from "@/hooks/useCurrentUser";
 import useFetchApiItems from "@/hooks/useFetchApiItems";
 import CustomBtnFood from "@/components/pages/foods/CustomBtnFood";
 import {

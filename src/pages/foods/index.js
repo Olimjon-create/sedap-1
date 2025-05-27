@@ -8,7 +8,7 @@ import FoodSearch from "@/components/pages/foods/FoodSearch";
 import FoodBtn from "@/components/pages/foods/FoodBtn";
 import NewBtn from "@/components/pages/foods/NewBtn";
 import useFetchApiItems from "@/hooks/useFetchApiItems";
-import useCurrent from "@/hooks/useCurrent";
+import useCurrent from "@/hooks/useCurrentUser";
 
 export default function Foods() {
   const [searchValue, setSearchValue] = useState("");
