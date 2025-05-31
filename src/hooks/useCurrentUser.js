@@ -6,9 +6,11 @@ export default function useCurrentUser() {
     if (typeof window !== "undefined") {
       let user1 = localStorage.getItem("user");
       user1 = user1 ? JSON.parse(user1) : null;
+
       if (!user) {
         setUser(user1);
       }
+      // restauratId;
     }
   }, []);
 

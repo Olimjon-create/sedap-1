@@ -1,18 +1,24 @@
 import React, { useEffect, useState } from "react";
-import { Box, TextField, Button, IconButton, CircularProgress } from "@mui/material";
+import {
+  Box,
+  TextField,
+  Button,
+  IconButton,
+  CircularProgress,
+} from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import useCurrentUser from "@/hooks/useCurrentUser";
 import useCategory from "@/hooks/useCategories";
 
 export default function CategoryForm({
+  onCreate,
+  onRefetch,
   editCategory,
   onCancel,
   foundRestaurant,
   onSuccess,
   refetchCategories,
-  onCreate,
 }) {
-  const [handleCreateCategory] = useCategory();
   const [form, setForm] = useState({
     name: "",
     description: "",
@@ -27,20 +33,26 @@ export default function CategoryForm({
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    handleCreateCategory(form);
-    if (resId) {
-      create({
-        data: {},
-      });
-    } else {
-      update({
-        data: {},
-      });
-    }
+    onCreate(form);
+    onRefetch();
+    console.log(form);
+    // if (resId) {
+    //   create({
+    //     data: {},
+    //   });
+    // } else {
+    //   update({
+    //     data: {},
+    //   });
+    // }
+    setForm({
+      documentId: null,
+      name: "",
+      description: "",
+    });
   };
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const user = useCurrentUser();
 
   useEffect(() => {
     if (editCategory) {
@@ -57,62 +69,6 @@ export default function CategoryForm({
       });
     }
   }, [editCategory]);
-
-  const validateForm = () => {
-    if (!form.name.trim()) {
-      setError("Category nomi kerak");
-      return false;
-    }
-    if (!user.restaurantId) {
-      setError("Restoran topilmadi");
-      return false;
-    }
-    return true;
-  };
-
-  const saveCategory = async () => {
-    if (!validateForm()) return;
-
-    setLoading(true);
-    setError(null);
-
-    const payload = {
-      data: {
-        name: form.name.trim(),
-        description: form.description.trim(),
-        internalName: `${foundRestaurant.name}_${form.name}`.replace(/\s+/g, ""),
-        restaurant: foundRestaurant.documentId,
-      },
-    };
-
-    const url = form.documentId
-      ? `http://192.168.100.109:1337/api/categories/${form.documentId}`
-      : `http://192.168.100.109:1337/api/categories`;
-
-    const method = form.documentId ? "PUT" : "POST";
-
-    try {
-      const response = await fetch(url, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error?.message || "Category saqlashda xatolik yuz berdi");
-      }
-
-      setForm({ documentId: null, name: "", description: "" });
-      if (onSuccess) onSuccess(data);
-      if (refetchCategories) refetchCategories();
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <form onSubmit={handleSubmit}>
@@ -146,14 +102,14 @@ export default function CategoryForm({
             disabled={loading}
             sx={{ minWidth: 120 }}
           >
-            {loading ? <CircularProgress size={24} color="inherit" /> : "Qo'shish"}
+            Qo'shish
           </Button>
 
-          {/* {form.documentId && (
-          <IconButton color="error" onClick={onCancel} disabled={loading}>
-          <CloseIcon />
-          </IconButton>
-        )} */}
+          {form.documentId && (
+            <IconButton color="error" onClick={onCancel} disabled={loading}>
+              <CloseIcon />
+            </IconButton>
+          )}
         </Box>
       </Box>
     </form>

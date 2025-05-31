@@ -6,7 +6,10 @@ import CategoryForm from "@/components/pages/categories/CategoryForm";
 import useCategories from "@/hooks/useCategories";
 
 export default function CategoriesPage() {
-  const [items, refetch, delCat, create] = useCategories();
+  const [
+    { categories, isLoading, error, reFetch },
+    { getCategory, createCategory, updateCategory, deleteCategory },
+  ] = useCategories();
   const [cate, setCate] = useState({
     name: "",
     description: "",
@@ -33,8 +36,13 @@ export default function CategoriesPage() {
       <Typography variant="h4" mb={3}>
         restoranining Categories
       </Typography>
-      <CategoryForm onCreate={create} />
-      <CategoryTable categories={items} onDelete={delCat} />
+      <CategoryForm onCreate={createCategory} onRefetch={reFetch} />
+      <CategoryTable
+        categories={categories}
+        onDelete={deleteCategory}
+        onRefetch={reFetch}
+        onUpdate={updateCategory}
+      />
     </Box>
   );
 }
