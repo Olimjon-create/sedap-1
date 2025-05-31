@@ -1,14 +1,8 @@
 import React, { useEffect, useState } from "react";
-import {
-  Box,
-  TextField,
-  Button,
-  IconButton,
-  CircularProgress,
-} from "@mui/material";
+import { Box, TextField, Button, IconButton, CircularProgress } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import useCurrentUser from "@/hooks/useCurrentUser";
-import useCategory from "@/hooks/useCategory";
+import useCategory from "@/hooks/useCategories";
 
 export default function CategoryForm({
   editCategory,
@@ -16,6 +10,7 @@ export default function CategoryForm({
   foundRestaurant,
   onSuccess,
   refetchCategories,
+  onCreate,
 }) {
   const [handleCreateCategory] = useCategory();
   const [form, setForm] = useState({
@@ -33,6 +28,15 @@ export default function CategoryForm({
   const handleSubmit = (e) => {
     e.preventDefault();
     handleCreateCategory(form);
+    if (resId) {
+      create({
+        data: {},
+      });
+    } else {
+      update({
+        data: {},
+      });
+    }
   };
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -76,10 +80,7 @@ export default function CategoryForm({
       data: {
         name: form.name.trim(),
         description: form.description.trim(),
-        internalName: `${foundRestaurant.name}_${form.name}`.replace(
-          /\s+/g,
-          ""
-        ),
+        internalName: `${foundRestaurant.name}_${form.name}`.replace(/\s+/g, ""),
         restaurant: foundRestaurant.documentId,
       },
     };
@@ -100,9 +101,7 @@ export default function CategoryForm({
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(
-          data.error?.message || "Category saqlashda xatolik yuz berdi"
-        );
+        throw new Error(data.error?.message || "Category saqlashda xatolik yuz berdi");
       }
 
       setForm({ documentId: null, name: "", description: "" });
@@ -147,11 +146,7 @@ export default function CategoryForm({
             disabled={loading}
             sx={{ minWidth: 120 }}
           >
-            {loading ? (
-              <CircularProgress size={24} color="inherit" />
-            ) : (
-              "Qo'shish"
-            )}
+            {loading ? <CircularProgress size={24} color="inherit" /> : "Qo'shish"}
           </Button>
 
           {/* {form.documentId && (

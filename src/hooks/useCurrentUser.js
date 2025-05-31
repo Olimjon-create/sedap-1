@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { axiosInstance } from "@/utils/axiosInstance";
 
 export default function useCurrentUser() {
   const [user, setUser] = useState(null);
@@ -7,7 +6,9 @@ export default function useCurrentUser() {
     if (typeof window !== "undefined") {
       let user1 = localStorage.getItem("user");
       user1 = user1 ? JSON.parse(user1) : null;
-      setUser(user1);
+      if (!user) {
+        setUser(user1);
+      }
     }
   }, []);
 

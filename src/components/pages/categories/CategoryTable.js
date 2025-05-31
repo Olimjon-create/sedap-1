@@ -1,82 +1,13 @@
 import React, { useEffect, useState } from "react";
-import useCurrent from "@/hooks/useCurrentUser";
-import useFetchApiItems from "@/hooks/useFetchApiItems";
 import CustomBtnFood from "@/components/pages/foods/CustomBtnFood";
-import {
-  Table,
-  TableHead,
-  TableBody,
-  TableRow,
-  TableCell,
-  Paper,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-} from "@mui/material";
+import { Table, TableHead, TableBody, TableRow, TableCell, Paper } from "@mui/material";
+import CategoryDialog from "./Dialog";
 
-function CategoryTable({ setDialogState, handleChange, handleSubmit }) {
-  const user = useCurrent();
-  console.log(user);
-
-  const [form, setForm] = useState({
-    documentId: null,
-    name: "",
-    description: "",
+function CategoryTable({ onDelete, categories, isLoading }) {
+  const [dialogState, setDialogState] = useState({
+    open: false,
+    categoryId: null,
   });
-
-  // const [foundRestaurant, setFoundRestaurant] = useState(null);
-
-  const [categories, isLoading, refetchCategories] = useFetchApiItems(
-    user?.restaurantId
-      ? `/categories?filters[restaurant][documentId][$eq]=${user?.restaurantId}`
-      : null
-  );
-
-  // const [dialogState, setDialogState] = useState({
-  //   open: false,
-  //   categoryId: null,
-  // });
-
-  const handleDelete = (categoryId) => {
-    if (categoryId) {
-      fetch(`http://192.168.100.109:1337/api/categories/${categoryId}`, {
-        method: "DELETE",
-      })
-        .then((res) => {
-          console.log("delete:", res);
-          if (res.ok) {
-            setDialogState({
-              open: false,
-              categoryId: null,
-            });
-            refetchCategories();
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    }
-  };
-
-  // useEffect(() => {
-  //   if (user?.restaurantId) {
-  //     setFoundRestaurant(user.restaurants[0]);
-  //   }
-  // }, [user]);
-
-  const [editCategory, setEditCategory] = useState(null);
-
-  function cancelEdit() {
-    setEditCategory(null);
-    setForm({ name: "", description: "" });
-  }
-
-  useEffect(() => {
-    setForm(editCategory);
-  }, [editCategory]);
 
   return (
     <>
@@ -87,10 +18,7 @@ function CategoryTable({ setDialogState, handleChange, handleSubmit }) {
               <TableCell>ID</TableCell>
               <TableCell>Category</TableCell>
               <TableCell>Description</TableCell>
-              <TableCell
-                sx={{ textAlign: "end", paddingRight: "40px" }}
-                colSpan={2}
-              >
+              <TableCell sx={{ textAlign: "end", paddingRight: "40px" }} colSpan={2}>
                 Actions
               </TableCell>
             </TableRow>
@@ -107,12 +35,8 @@ function CategoryTable({ setDialogState, handleChange, handleSubmit }) {
                 <TableRow key={cat.id}>
                   <TableCell>{cat.id}</TableCell>
                   <TableCell>{cat.attributes?.name || cat.name}</TableCell>
-                  <TableCell>
-                    {cat.attributes?.description || cat.description || "-"}
-                  </TableCell>
-                  <TableCell
-                    sx={{ display: "flex", gap: "20px", justifyContent: "end" }}
-                  >
+                  <TableCell>{cat.attributes?.description || cat.description || "-"}</TableCell>
+                  <TableCell sx={{ display: "flex", gap: "20px", justifyContent: "end" }}>
                     <CustomBtnFood
                       onClick={() => setEditCategory(cat)}
                       back="#FF5B5B26"
@@ -143,6 +67,16 @@ function CategoryTable({ setDialogState, handleChange, handleSubmit }) {
           </TableBody>
         </Table>
       </Paper>
+      <CategoryDialog
+        isOpen={dialogState.open}
+        onConfirm={() => onDelete(dialogState.categoryId)}
+        onClose={() => {
+          setDialogState({
+            open: false,
+            categoryId: null,
+          });
+        }}
+      />
     </>
   );
 }
