@@ -13,16 +13,27 @@ import useCategory from "@/hooks/useCategories";
 export default function CategoryForm({
   onCreate,
   onRefetch,
-  editCategory,
+  category,
+  onUpdate,
   onCancel,
-  foundRestaurant,
-  onSuccess,
-  refetchCategories,
 }) {
   const [form, setForm] = useState({
+    documentId: null,
     name: "",
     description: "",
   });
+  const [editCategory, setEditCategory] = useState(null);
+
+  useEffect(() => {
+    if (category) {
+      setForm({
+        documentId: category.documentId,
+        name: category.name,
+        description: category.description,
+      });
+    }
+  }, [category]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({
@@ -33,18 +44,12 @@ export default function CategoryForm({
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onCreate(form);
-    onRefetch();
     console.log(form);
-    // if (resId) {
-    //   create({
-    //     data: {},
-    //   });
-    // } else {
-    //   update({
-    //     data: {},
-    //   });
-    // }
+    if (form.documentId) {
+      onUpdate(form);
+    } else {
+      onCreate(form);
+    }
     setForm({
       documentId: null,
       name: "",
@@ -69,7 +74,7 @@ export default function CategoryForm({
       });
     }
   }, [editCategory]);
-
+  console.log(form);
   return (
     <form onSubmit={handleSubmit}>
       <Box sx={{ mb: 4 }}>
@@ -98,11 +103,11 @@ export default function CategoryForm({
           <Button
             variant="contained"
             color={form.documentId ? "warning" : "primary"}
-            onClick={handleSubmit}
+            type="submit"
             disabled={loading}
             sx={{ minWidth: 120 }}
           >
-            Qo'shish
+            {form.documentId ? "update" : "create"}
           </Button>
 
           {form.documentId && (

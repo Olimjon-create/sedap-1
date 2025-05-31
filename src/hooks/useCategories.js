@@ -33,7 +33,7 @@ export default function useCategory() {
         data: {
           name: data.name,
           description: data.description,
-          internalName: `Asliddin_${data.name}`,
+          internalName: `OlimjonRes`,
           restaurant: user?.restaurantId,
         },
       };
@@ -88,20 +88,20 @@ export default function useCategory() {
   const updateCategory = async (data) => {
     if (!data?.documentId) {
       console.error("documentId topilmadi");
-      // return;
+      return;
     }
-
+    console.log("types", data);
     const values = {
       data: {
         name: data.name,
         description: data.description,
-        internalName: `${data.name}Res`,
+        internalName: `OlimjonRes`,
         restaurant: data.restaurantId || data?.restaurantId,
       },
     };
 
     axiosInstance
-      .patch(`${ROOT_PATH}/${data.documentId}`, values)
+      .put(`${ROOT_PATH}/${data.documentId}`, values)
       .then((res) => {
         console.log("Updated:", res.data);
         reFetch();

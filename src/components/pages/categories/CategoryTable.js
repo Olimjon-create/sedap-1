@@ -10,11 +10,16 @@ import {
 } from "@mui/material";
 import CategoryDialog from "./Dialog";
 
-function CategoryTable({ categories, onDelete, onRefetch, onUpdate }) {
+function CategoryTable({ categories, onDelete, onRefetch, onUpdate, setCat }) {
   const [dialogState, setDialogState] = useState({
     open: false,
     categoryId: null,
   });
+
+  const handleEdit = (cat) => {
+    setCat(cat);
+    console.log("categori table", cat);
+  };
 
   return (
     <>
@@ -46,7 +51,7 @@ function CategoryTable({ categories, onDelete, onRefetch, onUpdate }) {
                     sx={{ display: "flex", gap: "20px", justifyContent: "end" }}
                   >
                     <CustomBtnFood
-                      onClick={() => onUpdate(cat)}
+                      onClick={() => handleEdit(cat)}
                       back="#FF5B5B26"
                       img="/foodIcon2.png"
                       text="Edit"

@@ -10,38 +10,24 @@ export default function CategoriesPage() {
     { categories, isLoading, error, reFetch },
     { getCategory, createCategory, updateCategory, deleteCategory },
   ] = useCategories();
-  const [cate, setCate] = useState({
-    name: "",
-    description: "",
-  });
-
-  // const [editCategory, setEditCategory] = useState(null);
-
-  // function cancelEdit() {
-  //   setEditCategory(null);
-  //   setForm({ name: "", description: "" });
-  // }
-  // console.log(user);
-  // // useEffect(() => {
-  // //   if (user?.restaurants?.length > 0) {
-  // //     setFoundRestaurant(user.restaurants[0]);
-  // //   }
-  // // }, [user]);
-
-  // // const [categories, isLoading, refetchCategories, deleteCat, createCat] =
-  // //   useCategories();
-
+  const [cat, setCat] = useState(null);
+  console.log(cat);
   return (
     <Box sx={{ maxWidth: 900, mx: "auto", mt: 4 }}>
       <Typography variant="h4" mb={3}>
         restoranining Categories
       </Typography>
-      <CategoryForm onCreate={createCategory} onRefetch={reFetch} />
+      <CategoryForm
+        onCreate={createCategory}
+        onRefetch={reFetch}
+        category={cat}
+        onUpdate={updateCategory}
+      />
       <CategoryTable
         categories={categories}
         onDelete={deleteCategory}
         onRefetch={reFetch}
-        onUpdate={updateCategory}
+        setCat={setCat}
       />
     </Box>
   );

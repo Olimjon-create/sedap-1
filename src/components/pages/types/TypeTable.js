@@ -17,51 +17,11 @@ import {
   DialogTitle,
 } from "@mui/material";
 
-function TypeTable() {
-  const user = useCurrent();
-
-  const [form, setForm] = useState({
-    documentId: null,
-    name: "",
-    description: "",
+function TypeTable({ types, onDelete, onRefetch, onUpdate }) {
+  const [dialogState, setDialogState] = useState({
+    open: false,
+    categoryId: null,
   });
-
-  const [foundRestaurant, setFoundRestaurant] = useState(null);
-
-  const [type, isTypeLoading, refetchTypeCategories] = useFetchApiItems(
-    foundRestaurant
-      ? `/types?filters[category][documentId][$eq]=${foundRestaurant.documentId}`
-      : null
-  );
-
-  const handleDelete = (categoryId) => {
-    if (categoryId) {
-      fetch(`http://192.168.100.109:1337/api/categories/${categoryId}`, {
-        method: "DELETE",
-      })
-        .then((res) => {
-          console.log("delete:", res);
-          if (res.ok) {
-            setDialogState({
-              open: false,
-              categoryId: null,
-            });
-            refetchCategories();
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    }
-  };
-
-  useEffect(() => {
-    if (user?.restaurants?.length > 0) {
-      setFoundRestaurant(user.restaurants[0]);
-    }
-  }, [user]);
-
-  const [editCategory, setEditCategory] = useState(null);
 
   function cancelEdit() {
     setEditCategory(null);
@@ -108,7 +68,7 @@ function TypeTable() {
                     sx={{ display: "flex", gap: "20px", justifyContent: "end" }}
                   >
                     <CustomBtnFood
-                      onClick={() => setEditCategory(cat)}
+                      // onClick={() => }
                       back="#FF5B5B26"
                       img="/foodIcon2.png"
                       text="Edit"
@@ -136,6 +96,32 @@ function TypeTable() {
             )}
           </TableBody>
         </Table>
+        <Dialog
+          open={dialogState.open}
+          onClose={() => setDialogState({ open: false, categoryId: null })}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">Are you sure?</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              Do you want to delete?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={() => setDialogState({ open: false, categoryId: null })}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={() => handleDelete(dialogState.categoryId)}
+              autoFocus
+            >
+              Delete
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Paper>
     </>
   );
