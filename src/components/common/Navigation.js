@@ -3,18 +3,18 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import {
-  CiBank,
-  CiCircleList,
-  CiChat1,
-  CiWallet,
-  CiCalendar,
-  CiForkAndKnife,
-  CiAlignBottom,
-  CiViewList,
-  CiUser,
-  CiStar,
-  CiCircleMinus,
-} from "react-icons/ci";
+  MdDashboard,
+  MdListAlt,
+  MdPeople,
+  MdAnalytics,
+  MdStar,
+  MdRestaurantMenu,
+  MdCategory,
+  MdFormatListBulleted,
+  MdCalendarToday,
+  MdChat,
+  MdAccountBalanceWallet,
+} from "react-icons/md";
 import Image from "next/image";
 
 function Navigation(props) {
@@ -24,67 +24,67 @@ function Navigation(props) {
     {
       id: 1,
       linkName: "Dashboard",
-      icon: CiBank,
+      icon: MdDashboard,
       href: "/dashboard",
     },
     {
       id: 2,
       linkName: "Order List",
-      icon: CiViewList,
+      icon: MdListAlt,
       href: "/orders",
     },
     {
       id: 4,
       linkName: "Customers",
-      icon: CiUser,
+      icon: MdPeople,
       href: "/customers",
     },
     {
       id: 5,
       linkName: "Analytics",
-      icon: CiAlignBottom,
+      icon: MdAnalytics,
       href: "/analis",
     },
     {
       id: 6,
       linkName: "Review",
-      icon: CiStar,
+      icon: MdStar,
       href: "/review",
     },
     {
       id: 7,
       linkName: "Foods",
-      icon: CiForkAndKnife,
+      icon: MdRestaurantMenu,
       href: "/foods",
     },
     {
-      id: 7,
+      id: 8,
       linkName: "Categories",
-      icon: CiCircleList,
+      icon: MdCategory,
       href: "/categories",
     },
     {
-      id: 7,
+      id: 9,
       linkName: "Types",
-      icon: CiCircleList,
+      icon: MdFormatListBulleted,
       href: "/types",
     },
     {
       id: 10,
       linkName: "Calendar",
-      icon: CiCalendar,
+      icon: MdCalendarToday,
       href: "/calendar",
     },
     {
       id: 11,
       linkName: "Chat",
-      icon: CiChat1,
+      icon: MdChat,
       href: "/chat",
     },
     {
       id: 12,
       linkName: "Wallet",
-      icon: CiWallet,
+      icon: MdAccountBalanceWallet,
       href: "/wallet",
     },
   ];
@@ -232,7 +232,6 @@ function Navigation(props) {
           </p>
         </div>
       </aside>
-      {/* <Section/> */}
     </div>
   );
 }

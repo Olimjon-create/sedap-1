@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { axiosInstance } from "@/utils/axiosInstance";
 
 export default function useCurrentUser() {
   const [user, setUser] = useState(null);
+
   useEffect(() => {
     if (typeof window !== "undefined") {
       let user1 = localStorage.getItem("user");

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import useCurrent from "@/hooks/useCurrentUser";
 import useFetchApiItems from "@/hooks/useFetchApiItems";
 import CustomBtnFood from "@/components/pages/foods/CustomBtnFood";
+import { axiosInstance } from "@/utils/axiosInstance";
 import {
   Table,
   TableHead,
@@ -9,12 +10,6 @@ import {
   TableRow,
   TableCell,
   Paper,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
 } from "@mui/material";
 
 function CategoryTable({ setDialogState, handleChange, handleSubmit }) {
@@ -35,6 +30,7 @@ function CategoryTable({ setDialogState, handleChange, handleSubmit }) {
       : null
   );
 
+  console.log(categories);
   // const [dialogState, setDialogState] = useState({
   //   open: false,
   //   categoryId: null,
@@ -42,9 +38,12 @@ function CategoryTable({ setDialogState, handleChange, handleSubmit }) {
 
   const handleDelete = (categoryId) => {
     if (categoryId) {
-      fetch(`http://192.168.100.109:1337/api/categories/${categoryId}`, {
-        method: "DELETE",
-      })
+      axiosInstance(
+        `http://192.168.100.114:1337/api/categories/${categoryId}`,
+        {
+          method: "DELETE",
+        }
+      )
         .then((res) => {
           console.log("delete:", res);
           if (res.ok) {
@@ -116,7 +115,7 @@ function CategoryTable({ setDialogState, handleChange, handleSubmit }) {
                     <CustomBtnFood
                       onClick={() => setEditCategory(cat)}
                       back="#FF5B5B26"
-                      img="/foodIcon2.png"
+                      img="/foodicon2.png"
                       text="Edit"
                     />
                     <CustomBtnFood

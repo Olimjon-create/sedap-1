@@ -13,7 +13,7 @@ import {
 import useFetchApiItems from "@/hooks/useFetchApiItems";
 import { useState } from "react";
 import { useRouter } from "next/router";
-
+import { axiosInstance } from "@/utils/axiosInstance";
 function FoodForm({ title, food, btnText }) {
   const router = useRouter();
   const [isSnackOpen, setIsSnackOpen] = useState(false);
@@ -93,8 +93,8 @@ function FoodForm({ title, food, btnText }) {
         },
         body: JSON.stringify(values),
       };
-      fetch(
-        `http://192.168.100.109:1337/api/foods/${formData.documentId}`,
+      axiosInstance(
+        `http://192.168.100.114:1337/api/foods/${formData.documentId}`,
         options
       )
         .then((response) => response.json())
@@ -113,7 +113,7 @@ function FoodForm({ title, food, btnText }) {
           },
           body: JSON.stringify(values),
         };
-        fetch("http://192.168.100.109:1337/api/foods", options)
+        fetch("http://192.168.100.114:1337/api/foods", options)
           .then((response) => response.json())
           .then((res) => {
             console.log(res);
