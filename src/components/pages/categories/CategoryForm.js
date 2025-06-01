@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Box, TextField, Button, CircularProgress } from "@mui/material";
+import {
+  Box,
+  TextField,
+  Button,
+  CircularProgress,
+  IconButton,
+} from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 import useCurrentUser from "@/hooks/useCurrentUser";
-<<<<<<< HEAD
-import useCategories from "@/hooks/useCategories";
-=======
-import useCategory from "@/hooks/useCategories";
->>>>>>> 36e647cbe2a93b925766db517509c535d0c7ce35
 
 export default function CategoryForm({
   onCreate,
@@ -14,29 +16,30 @@ export default function CategoryForm({
   onUpdate,
   onCancel,
 }) {
-<<<<<<< HEAD
   const user = useCurrentUser();
-  const { loading, error: hookError, handleCreateCategory } = useCategories();
-
-=======
->>>>>>> 36e647cbe2a93b925766db517509c535d0c7ce35
   const [form, setForm] = useState({
     documentId: null,
     name: "",
     description: "",
   });
-<<<<<<< HEAD
-=======
-  const [editCategory, setEditCategory] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (category) {
       setForm({
-        documentId: category.documentId,
-        name: category.name,
-        description: category.description,
+        documentId: category.documentId || null,
+        name: category.name || "",
+        description: category.description || "",
+      });
+    } else {
+      setForm({
+        documentId: null,
+        name: "",
+        description: "",
       });
     }
+    setError(null);
   }, [category]);
 
   const handleChange = (e) => {
@@ -47,57 +50,12 @@ export default function CategoryForm({
     }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log(form);
-    if (form.documentId) {
-      onUpdate(form);
-    } else {
-      onCreate(form);
-    }
-    setForm({
-      documentId: null,
-      name: "",
-      description: "",
-    });
-  };
-  const [loading, setLoading] = useState(false);
->>>>>>> 36e647cbe2a93b925766db517509c535d0c7ce35
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    if (editCategory) {
-      setForm({
-        documentId: editCategory.documentId || null,
-        name: editCategory.name || "",
-        description: editCategory.description || "",
-      });
-    } else {
-      setForm({
-        documentId: null,
-        name: "",
-        description: "",
-      });
-    }
-    setError(null);
-  }, [editCategory]);
-<<<<<<< HEAD
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-    setError(null);
-  };
-
   const validateForm = () => {
     if (!form.name.trim()) {
       setError("Category nomi kerak");
       return false;
     }
-    if (!foundRestaurant || !foundRestaurant.documentId) {
+    if (!user?.restaurant?.documentId) {
       setError("Restoran topilmadi");
       return false;
     }
@@ -110,16 +68,17 @@ export default function CategoryForm({
 
     if (!validateForm()) return;
 
+    setLoading(true);
     try {
       const payload = {
         data: {
           name: form.name.trim(),
           description: form.description.trim(),
-          internalName: `${foundRestaurant.name}_${form.name}`.replace(
+          internalName: `${user.restaurant.name}_${form.name}`.replace(
             /\s+/g,
             ""
           ),
-          restaurant: foundRestaurant.documentId,
+          restaurant: user.restaurant.documentId,
         },
       };
 
@@ -145,22 +104,16 @@ export default function CategoryForm({
         );
       }
 
-      setForm({
-        documentId: null,
-        name: "",
-        description: "",
-      });
-
-      if (onSuccess) onSuccess(data);
-      if (refetchCategories) refetchCategories();
+      setForm({ documentId: null, name: "", description: "" });
+      if (onCancel) onCancel();
+      if (onRefetch) onRefetch();
     } catch (err) {
       setError(err.message || "Xatolik yuz berdi");
+    } finally {
+      setLoading(false);
     }
   };
 
-=======
-  console.log(form);
->>>>>>> 36e647cbe2a93b925766db517509c535d0c7ce35
   return (
     <form onSubmit={handleSubmit}>
       <Box sx={{ mb: 4 }}>
@@ -193,7 +146,6 @@ export default function CategoryForm({
             disabled={loading}
             sx={{ minWidth: 120 }}
           >
-<<<<<<< HEAD
             {loading ? (
               <CircularProgress size={24} color="inherit" />
             ) : form.documentId ? (
@@ -202,6 +154,7 @@ export default function CategoryForm({
               "Qo'shish"
             )}
           </Button>
+
           {onCancel && (
             <Button
               variant="outlined"
@@ -212,15 +165,12 @@ export default function CategoryForm({
             >
               Bekor qilish
             </Button>
-=======
-            {form.documentId ? "update" : "create"}
-          </Button>
+          )}
 
           {form.documentId && (
             <IconButton color="error" onClick={onCancel} disabled={loading}>
               <CloseIcon />
             </IconButton>
->>>>>>> 36e647cbe2a93b925766db517509c535d0c7ce35
           )}
         </Box>
       </Box>

@@ -1,53 +1,36 @@
-<<<<<<< HEAD
 import { useEffect, useState } from "react";
+import useFetchApiItems from "./useFetchApiItems";
 
 export default function useCurrentUser() {
   const [user, setUser] = useState(null);
+  const [restaurant, setRestaurant] = useState(null);
 
+  // Step 1: Get user from localStorage
   useEffect(() => {
     if (typeof window !== "undefined") {
-      let user1 = localStorage.getItem("user");
-      user1 = user1 ? JSON.parse(user1) : null;
-
-      if (!user) {
-        setUser(user1);
-      }
-      // restauratId;
+      const userFromStorage = localStorage.getItem("user");
+      const parsedUser = userFromStorage ? JSON.parse(userFromStorage) : null;
+      setUser(parsedUser);
     }
   }, []);
 
-  return user;
-}
-=======
-import React from "react";
-import { useState } from "react";
-import useFetchApiItems from "./useFetchApiItems";
-
-function useCurrentUser() {
-  const [user, setUser] = useState(null);
-  if (typeof window !== "undefined") {
-    setUser(localStorage.getItem("user"));
-    setUser(user ? JSON.parse(user) : null);
-  }
-
-  if (!user) {
-    return null;
-  }
-
-  const [restaurants, isresLoading, refetchres] = useFetchApiItems(
-    `/restaurants?filters[users][documentId][$eqi]=${user.documentId}`
+  // Step 2: Fetch restaurant for the user
+  const [restaurants, isResLoading] = useFetchApiItems(
+    user?.documentId
+      ? `/restaurants?filters[users][documentId][$eqi]=${user.documentId}`
+      : null
   );
 
-  const foundRestaurant = restaurants[0] ?? null;
-  if (!foundRestaurant) {
-    return null;
-  }
+  useEffect(() => {
+    if (restaurants && restaurants.length > 0) {
+      setRestaurant(restaurants[0]);
+    }
+  }, [restaurants]);
+
+  if (!user) return null;
 
   return {
     ...user,
-    restaurant: foundRestaurant,
+    restaurant,
   };
 }
-
-export default useCurrentUser;
->>>>>>> 95028bcbd473c4981aa9e5fc045d0ff3668b73d5

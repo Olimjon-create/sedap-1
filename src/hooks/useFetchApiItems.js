@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 // import { useState, useEffect } from "react";
 // import { axiosInstance } from "@/utils/axiosInstance";
 
@@ -77,7 +75,6 @@
 
 // path get all
 
->>>>>>> 36e647cbe2a93b925766db517509c535d0c7ce35
 import { useState, useEffect } from "react";
 import { axiosInstance } from "@/utils/axiosInstance";
 

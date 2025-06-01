@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import CustomBtnFood from "@/components/pages/foods/CustomBtnFood";
-import { axiosInstance } from "@/utils/axiosInstance";
 import {
   Table,
   TableHead,
@@ -11,54 +10,15 @@ import {
 } from "@mui/material";
 import CategoryDialog from "./Dialog";
 
-function CategoryTable({ categories, onDelete, onRefetch, onUpdate, setCat }) {
+function CategoryTable({ categories, onDelete, onRefetch, setCat }) {
   const [dialogState, setDialogState] = useState({
     open: false,
     categoryId: null,
   });
 
-<<<<<<< HEAD
-  // const [foundRestaurant, setFoundRestaurant] = useState(null);
-
-  const [categories, isLoading, refetchCategories] = useFetchApiItems(
-    user?.restaurantId
-      ? `/categories?filters[restaurant][documentId][$eq]=${user?.restaurantId}`
-      : null
-  );
-
-  console.log(categories);
-  // const [dialogState, setDialogState] = useState({
-  //   open: false,
-  //   categoryId: null,
-  // });
-
-  const handleDelete = (categoryId) => {
-    if (categoryId) {
-      axiosInstance(
-        `http://192.168.100.114:1337/api/categories/${categoryId}`,
-        {
-          method: "DELETE",
-        }
-      )
-        .then((res) => {
-          console.log("delete:", res);
-          if (res.ok) {
-            setDialogState({
-              open: false,
-              categoryId: null,
-            });
-            refetchCategories();
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    }
-=======
   const handleEdit = (cat) => {
     setCat(cat);
-    console.log("categori table", cat);
->>>>>>> 36e647cbe2a93b925766db517509c535d0c7ce35
+    console.log("Edit clicked:", cat);
   };
 
   return (
@@ -79,13 +39,13 @@ function CategoryTable({ categories, onDelete, onRefetch, onUpdate, setCat }) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {categories.length > 0 ? (
+            {categories && categories.length > 0 ? (
               categories.map((cat) => (
-                <TableRow key={cat.id}>
+                <TableRow key={cat.documentId || cat.id}>
                   <TableCell>{cat.id}</TableCell>
-                  <TableCell>{cat.attributes?.name || cat.name}</TableCell>
+                  <TableCell>{cat.name || cat.attributes?.name}</TableCell>
                   <TableCell>
-                    {cat.attributes?.description || cat.description || "-"}
+                    {cat.description || cat.attributes?.description || "-"}
                   </TableCell>
                   <TableCell
                     sx={{ display: "flex", gap: "20px", justifyContent: "end" }}
@@ -100,7 +60,7 @@ function CategoryTable({ categories, onDelete, onRefetch, onUpdate, setCat }) {
                       onClick={() =>
                         setDialogState({
                           open: true,
-                          categoryId: cat.documentId,
+                          categoryId: cat.documentId || cat.id,
                         })
                       }
                       back="#2D9CDB26"
@@ -120,15 +80,16 @@ function CategoryTable({ categories, onDelete, onRefetch, onUpdate, setCat }) {
           </TableBody>
         </Table>
       </Paper>
+
       <CategoryDialog
         isOpen={dialogState.open}
-        onConfirm={() => onDelete(dialogState.categoryId)}
-        onClose={() => {
-          setDialogState({
-            open: false,
-            categoryId: null,
-          });
+        onConfirm={() => {
+          if (dialogState.categoryId) {
+            onDelete(dialogState.categoryId);
+          }
+          setDialogState({ open: false, categoryId: null });
         }}
+        onClose={() => setDialogState({ open: false, categoryId: null })}
         onRefetch={onRefetch}
       />
     </>
