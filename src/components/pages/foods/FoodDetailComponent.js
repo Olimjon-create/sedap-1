@@ -63,7 +63,12 @@ export default function FoodDetailComponent(props) {
                 borderRadius: "14px",
               }}
             >
-              <Image width={195} height={214} src={data.image} alt="food image" />
+              <Image
+                width={195}
+                height={214}
+                src={data.image}
+                alt="food image"
+              />
             </div>
             <Box
               sx={{
