@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-import useCurrent from "@/hooks/useCurrentUser";
-import useFetchApiItems from "@/hooks/useFetchApiItems";
 import CustomBtnFood from "@/components/pages/foods/CustomBtnFood";
 import { axiosInstance } from "@/utils/axiosInstance";
 import {
@@ -11,17 +9,15 @@ import {
   TableCell,
   Paper,
 } from "@mui/material";
+import CategoryDialog from "./Dialog";
 
-function CategoryTable({ setDialogState, handleChange, handleSubmit }) {
-  const user = useCurrent();
-  console.log(user);
-
-  const [form, setForm] = useState({
-    documentId: null,
-    name: "",
-    description: "",
+function CategoryTable({ categories, onDelete, onRefetch, onUpdate, setCat }) {
+  const [dialogState, setDialogState] = useState({
+    open: false,
+    categoryId: null,
   });
 
+<<<<<<< HEAD
   // const [foundRestaurant, setFoundRestaurant] = useState(null);
 
   const [categories, isLoading, refetchCategories] = useFetchApiItems(
@@ -58,24 +54,12 @@ function CategoryTable({ setDialogState, handleChange, handleSubmit }) {
           console.log(error);
         });
     }
+=======
+  const handleEdit = (cat) => {
+    setCat(cat);
+    console.log("categori table", cat);
+>>>>>>> 36e647cbe2a93b925766db517509c535d0c7ce35
   };
-
-  // useEffect(() => {
-  //   if (user?.restaurantId) {
-  //     setFoundRestaurant(user.restaurants[0]);
-  //   }
-  // }, [user]);
-
-  const [editCategory, setEditCategory] = useState(null);
-
-  function cancelEdit() {
-    setEditCategory(null);
-    setForm({ name: "", description: "" });
-  }
-
-  useEffect(() => {
-    setForm(editCategory);
-  }, [editCategory]);
 
   return (
     <>
@@ -95,13 +79,7 @@ function CategoryTable({ setDialogState, handleChange, handleSubmit }) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {isLoading ? (
-              <TableRow>
-                <TableCell colSpan={5} align="center">
-                  Yuklanmoqda...
-                </TableCell>
-              </TableRow>
-            ) : categories.length > 0 ? (
+            {categories.length > 0 ? (
               categories.map((cat) => (
                 <TableRow key={cat.id}>
                   <TableCell>{cat.id}</TableCell>
@@ -113,7 +91,7 @@ function CategoryTable({ setDialogState, handleChange, handleSubmit }) {
                     sx={{ display: "flex", gap: "20px", justifyContent: "end" }}
                   >
                     <CustomBtnFood
-                      onClick={() => setEditCategory(cat)}
+                      onClick={() => handleEdit(cat)}
                       back="#FF5B5B26"
                       img="/foodicon2.png"
                       text="Edit"
@@ -142,6 +120,17 @@ function CategoryTable({ setDialogState, handleChange, handleSubmit }) {
           </TableBody>
         </Table>
       </Paper>
+      <CategoryDialog
+        isOpen={dialogState.open}
+        onConfirm={() => onDelete(dialogState.categoryId)}
+        onClose={() => {
+          setDialogState({
+            open: false,
+            categoryId: null,
+          });
+        }}
+        onRefetch={onRefetch}
+      />
     </>
   );
 }

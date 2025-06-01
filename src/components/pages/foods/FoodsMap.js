@@ -20,7 +20,11 @@ function FoodsMap({ selected, data, refetch }) {
 
   const handleDelete = (foodId) => {
     if (foodId) {
+<<<<<<< HEAD
       axiosInstance(`http://192.168.100.114:1337/api/foods/${foodId}`, {
+=======
+      fetch(`http://192.168.100.114:1337/api/foods/${foodId}`, {
+>>>>>>> 36e647cbe2a93b925766db517509c535d0c7ce35
         method: "DELETE",
       })
         .then((res) => {

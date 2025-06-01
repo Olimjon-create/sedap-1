@@ -17,15 +17,13 @@ import {
   DialogTitle,
 } from "@mui/material";
 
-function TypeTable() {
-  const user = useCurrent();
-
-  const [form, setForm] = useState({
-    documentId: null,
-    name: "",
-    description: "",
+function TypeTable({ types, onDelete, onRefetch, onUpdate }) {
+  const [dialogState, setDialogState] = useState({
+    open: false,
+    categoryId: null,
   });
 
+<<<<<<< HEAD
   const [foundRestaurant, setFoundRestaurant] = useState(null);
 
   const [type, isTypeLoading, refetchTypeCategories] = useFetchApiItems(
@@ -63,6 +61,8 @@ function TypeTable() {
 
   const [editCategory, setEditCategory] = useState(null);
 
+=======
+>>>>>>> 36e647cbe2a93b925766db517509c535d0c7ce35
   function cancelEdit() {
     setEditCategory(null);
     setForm({ name: "", description: "" });
@@ -108,7 +108,7 @@ function TypeTable() {
                     sx={{ display: "flex", gap: "20px", justifyContent: "end" }}
                   >
                     <CustomBtnFood
-                      onClick={() => setEditCategory(cat)}
+                      // onClick={() => }
                       back="#FF5B5B26"
                       img="/foodIcon2.png"
                       text="Edit"
@@ -136,6 +136,32 @@ function TypeTable() {
             )}
           </TableBody>
         </Table>
+        <Dialog
+          open={dialogState.open}
+          onClose={() => setDialogState({ open: false, categoryId: null })}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">Are you sure?</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              Do you want to delete?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={() => setDialogState({ open: false, categoryId: null })}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={() => handleDelete(dialogState.categoryId)}
+              autoFocus
+            >
+              Delete
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Paper>
     </>
   );

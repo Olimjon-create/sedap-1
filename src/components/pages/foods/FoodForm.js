@@ -93,7 +93,11 @@ function FoodForm({ title, food, btnText }) {
         },
         body: JSON.stringify(values),
       };
+<<<<<<< HEAD
       axiosInstance(
+=======
+      fetch(
+>>>>>>> 36e647cbe2a93b925766db517509c535d0c7ce35
         `http://192.168.100.114:1337/api/foods/${formData.documentId}`,
         options
       )

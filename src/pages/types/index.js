@@ -22,8 +22,10 @@ import useCurrent from "@/hooks/useCurrentUser";
 import useFetchApiItems from "@/hooks/useFetchApiItems";
 import CustomBtnFood from "@/components/pages/foods/CustomBtnFood";
 import TypeForm from "@/components/pages/types/TypeForm";
+import useTypes from "@/hooks/useTypes";
 
 export default function TypePage() {
+<<<<<<< HEAD
   const user = useCurrent();
   const [foundRestaurant, setFoundRestaurant] = useState(null);
 
@@ -64,47 +66,28 @@ export default function TypePage() {
       setFoundRestaurant(user.restaurants[0]);
     }
   }, [user]);
+=======
+  const [{ types }, {}] = useTypes();
+>>>>>>> 36e647cbe2a93b925766db517509c535d0c7ce35
 
   return (
     <Box sx={{ maxWidth: 900, mx: "auto", mt: 4 }}>
       <Typography variant="h4" mb={3}>
-        {foundRestaurant?.name} restoranining Categories
+        restoranining Type
       </Typography>
 
       <TypeForm
-        editCategory={editCategory}
-        onCancel={cancelEdit}
-        foundRestaurant={foundRestaurant}
-        cat={categories}
+      // editCategory={editCategory}
+      // onCancel={cancelEdit}
+      // foundRestaurant={foundRestaurant}
+      // cat={categories}
       />
-      <TypeTable />
-
-      <Dialog
-        open={dialogState.open}
-        onClose={() => setDialogState({ open: false, categoryId: null })}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">Are you sure?</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Do you want to delete?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={() => setDialogState({ open: false, categoryId: null })}
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={() => handleDelete(dialogState.categoryId)}
-            autoFocus
-          >
-            Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <TypeTable
+        categories={types}
+        // onDelete={deleteCategory}
+        // onRefetch={reFetch}
+        // onUpdate={updateCategory}
+      />
     </Box>
   );
 }

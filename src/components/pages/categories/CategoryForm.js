@@ -1,23 +1,68 @@
 import React, { useEffect, useState } from "react";
 import { Box, TextField, Button, CircularProgress } from "@mui/material";
 import useCurrentUser from "@/hooks/useCurrentUser";
+<<<<<<< HEAD
 import useCategories from "@/hooks/useCategories";
+=======
+import useCategory from "@/hooks/useCategories";
+>>>>>>> 36e647cbe2a93b925766db517509c535d0c7ce35
 
 export default function CategoryForm({
-  editCategory,
+  onCreate,
+  onRefetch,
+  category,
+  onUpdate,
   onCancel,
-  foundRestaurant,
-  onSuccess,
-  refetchCategories,
 }) {
+<<<<<<< HEAD
   const user = useCurrentUser();
   const { loading, error: hookError, handleCreateCategory } = useCategories();
 
+=======
+>>>>>>> 36e647cbe2a93b925766db517509c535d0c7ce35
   const [form, setForm] = useState({
     documentId: null,
     name: "",
     description: "",
   });
+<<<<<<< HEAD
+=======
+  const [editCategory, setEditCategory] = useState(null);
+
+  useEffect(() => {
+    if (category) {
+      setForm({
+        documentId: category.documentId,
+        name: category.name,
+        description: category.description,
+      });
+    }
+  }, [category]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(form);
+    if (form.documentId) {
+      onUpdate(form);
+    } else {
+      onCreate(form);
+    }
+    setForm({
+      documentId: null,
+      name: "",
+      description: "",
+    });
+  };
+  const [loading, setLoading] = useState(false);
+>>>>>>> 36e647cbe2a93b925766db517509c535d0c7ce35
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -36,6 +81,7 @@ export default function CategoryForm({
     }
     setError(null);
   }, [editCategory]);
+<<<<<<< HEAD
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -112,6 +158,9 @@ export default function CategoryForm({
     }
   };
 
+=======
+  console.log(form);
+>>>>>>> 36e647cbe2a93b925766db517509c535d0c7ce35
   return (
     <form onSubmit={handleSubmit}>
       <Box sx={{ mb: 4 }}>
@@ -144,6 +193,7 @@ export default function CategoryForm({
             disabled={loading}
             sx={{ minWidth: 120 }}
           >
+<<<<<<< HEAD
             {loading ? (
               <CircularProgress size={24} color="inherit" />
             ) : form.documentId ? (
@@ -162,6 +212,15 @@ export default function CategoryForm({
             >
               Bekor qilish
             </Button>
+=======
+            {form.documentId ? "update" : "create"}
+          </Button>
+
+          {form.documentId && (
+            <IconButton color="error" onClick={onCancel} disabled={loading}>
+              <CloseIcon />
+            </IconButton>
+>>>>>>> 36e647cbe2a93b925766db517509c535d0c7ce35
           )}
         </Box>
       </Box>
