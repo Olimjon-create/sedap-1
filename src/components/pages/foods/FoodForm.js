@@ -18,7 +18,7 @@ import { axiosInstance } from "@/utils/axiosInstance";
 
 import useCurrentUser from "@/hooks/useCurrentUser";
 
->>>>>>> 95028bcbd473c4981aa9e5fc045d0ff3668b73d5
+
 function FoodForm({ title, food, btnText }) {
   const router = useRouter();
   const [isSnackOpen, setIsSnackOpen] = useState(false);
