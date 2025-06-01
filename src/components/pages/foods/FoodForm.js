@@ -13,9 +13,9 @@ import {
 import useFetchApiItems from "@/hooks/useFetchApiItems";
 import { useState } from "react";
 import { useRouter } from "next/router";
-<<<<<<< HEAD
+
 import { axiosInstance } from "@/utils/axiosInstance";
-=======
+
 import useCurrentUser from "@/hooks/useCurrentUser";
 
 >>>>>>> 95028bcbd473c4981aa9e5fc045d0ff3668b73d5
@@ -87,11 +87,10 @@ function FoodForm({ title, food, btnText }) {
         },
         body: JSON.stringify(values),
       };
-<<<<<<< HEAD
       axiosInstance(
-=======
+
       fetch(
->>>>>>> 36e647cbe2a93b925766db517509c535d0c7ce35
+
         `http://192.168.100.114:1337/api/foods/${formData.documentId}`,
         options
       )
@@ -100,7 +99,7 @@ function FoodForm({ title, food, btnText }) {
           console.log(res);
           router.push(`/foods/${res.data.documentId}`);
         })
-        .catch((error) => console.error(error));
+        .catch((error) => console.error(error))
     } else {
       if (values.data.restaurant) {
         const options = {
