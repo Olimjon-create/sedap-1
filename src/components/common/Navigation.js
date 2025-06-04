@@ -3,90 +3,35 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import {
-  CiBank,
-  CiCircleList,
-  CiChat1,
-  CiWallet,
-  CiCalendar,
-  CiForkAndKnife,
-  CiAlignBottom,
-  CiViewList,
-  CiUser,
-  CiStar,
-  CiCircleMinus,
-} from "react-icons/ci";
+  FaTachometerAlt,
+  FaClipboardList,
+  FaUsers,
+  FaChartBar,
+  FaStar,
+  FaUtensils,
+  FaThLarge,
+  FaListAlt,
+  FaCalendarAlt,
+  FaComments,
+  FaWallet,
+} from "react-icons/fa";
 import Image from "next/image";
 
-function Navigation(props) {
+function Navigation() {
   const router = useRouter();
 
   const links = [
-    {
-      id: 1,
-      linkName: "Dashboard",
-      icon: CiBank,
-      href: "/dashboard",
-    },
-    {
-      id: 2,
-      linkName: "Order List",
-      icon: CiViewList,
-      href: "/orders",
-    },
-    {
-      id: 4,
-      linkName: "Customers",
-      icon: CiUser,
-      href: "/customers",
-    },
-    {
-      id: 5,
-      linkName: "Analytics",
-      icon: CiAlignBottom,
-      href: "/analis",
-    },
-    {
-      id: 6,
-      linkName: "Review",
-      icon: CiStar,
-      href: "/review",
-    },
-    {
-      id: 7,
-      linkName: "Foods",
-      icon: CiForkAndKnife,
-      href: "/foods",
-    },
-    {
-      id: 7,
-      linkName: "Categories",
-      icon: CiCircleList,
-      href: "/categories",
-    },
-    {
-      id: 7,
-      linkName: "Types",
-      icon: CiCircleList,
-      href: "/types",
-    },
-    {
-      id: 10,
-      linkName: "Calendar",
-      icon: CiCalendar,
-      href: "/calendar",
-    },
-    {
-      id: 11,
-      linkName: "Chat",
-      icon: CiChat1,
-      href: "/chat",
-    },
-    {
-      id: 12,
-      linkName: "Wallet",
-      icon: CiWallet,
-      href: "/wallet",
-    },
+    { id: 1, linkName: "Dashboard", icon: FaTachometerAlt, href: "/dashboard" },
+    { id: 2, linkName: "Order List", icon: FaClipboardList, href: "/orders" },
+    { id: 3, linkName: "Customers", icon: FaUsers, href: "/customers" },
+    { id: 4, linkName: "Analytics", icon: FaChartBar, href: "/analiytics" },
+    { id: 5, linkName: "Review", icon: FaStar, href: "/review" },
+    { id: 6, linkName: "Foods", icon: FaUtensils, href: "/foods" },
+    { id: 7, linkName: "Categories", icon: FaThLarge, href: "/categories" },
+    { id: 8, linkName: "Types", icon: FaListAlt, href: "/types" },
+    { id: 9, linkName: "Calendar", icon: FaCalendarAlt, href: "/calendar" },
+    { id: 10, linkName: "Chat", icon: FaComments, href: "/chat" },
+    { id: 11, linkName: "Wallet", icon: FaWallet, href: "/wallet" },
   ];
 
   return (
@@ -99,7 +44,7 @@ function Navigation(props) {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          fontFamily: "Barlow sans-serif",
+          fontFamily: "Barlow, sans-serif",
         }}
       >
         <div
@@ -111,10 +56,10 @@ function Navigation(props) {
         >
           <Image
             src="/Sedap.png"
-            alt=""
-            style={{ backgroundColor: "unset" }}
+            alt="Sedap Logo"
             width={167}
             height={49}
+            style={{ backgroundColor: "unset" }}
           />
           <p
             style={{
@@ -126,6 +71,7 @@ function Navigation(props) {
             Modern Admin Dashboard
           </p>
         </div>
+
         <div
           style={{
             width: "100%",
@@ -148,6 +94,7 @@ function Navigation(props) {
             );
           })}
         </div>
+
         <div
           style={{
             width: "260px",
@@ -158,21 +105,15 @@ function Navigation(props) {
             borderRadius: "10px",
           }}
         >
-          <div
-            style={{
-              width: "140px",
-              backgroundColor: "unset",
-            }}
-          >
+          <div style={{ width: "140px", backgroundColor: "unset" }}>
             <p
               style={{
-                width: "140px",
                 fontSize: "12px",
                 color: "white",
                 backgroundColor: "unset",
               }}
             >
-              Please, organize your menus through button bellow!
+              Please, organize your menus through button below!
             </p>
             <button
               style={{
@@ -187,11 +128,17 @@ function Navigation(props) {
                 cursor: "pointer",
               }}
             >
-              +Add Menus
+              + Add Menus
             </button>
           </div>
-          <Image src="/illustration.png" width={77} height={91} alt="grand" />
+          <Image
+            src="/illustration.png"
+            width={77}
+            height={91}
+            alt="Illustration"
+          />
         </div>
+
         <div
           style={{
             width: "245px",
@@ -202,49 +149,45 @@ function Navigation(props) {
         >
           <p
             style={{
-              backgroundColor: "unset",
               color: "#515151",
               fontSize: "12px",
               marginBottom: "5px",
+              backgroundColor: "unset",
             }}
           >
             Sedap Restaurant Admin Dashboard
           </p>
           <p
             style={{
-              backgroundColor: "unset",
               color: "#969ba0",
               fontSize: "12px",
-              fontWeight: "400px",
+              backgroundColor: "unset",
             }}
           >
             © 2020 All Rights Reserved
           </p>
           <p
             style={{
-              backgroundColor: "unset",
               color: "#969ba0",
               fontSize: "14px",
               marginTop: "15px",
+              backgroundColor: "unset",
             }}
           >
             Made with ♥ by Peterdraw
           </p>
         </div>
       </aside>
-      {/* <Section/> */}
     </div>
   );
 }
 
-function CustomLink(props) {
-  const { linkName, icon: Icon, href, active } = props;
+function CustomLink({ linkName, icon: Icon, href, active }) {
   return (
     <div style={{ position: "relative", width: "250px", margin: "0 auto" }}>
       {active && (
         <div
           style={{
-            content: "''",
             position: "absolute",
             left: "-20%",
             width: "8px",
@@ -252,7 +195,7 @@ function CustomLink(props) {
             backgroundColor: "#00b074",
             borderRadius: "4px",
           }}
-        ></div>
+        />
       )}
       <Link
         href={href}
@@ -266,7 +209,6 @@ function CustomLink(props) {
           borderRadius: "12px",
           textDecoration: "none",
           fontWeight: 500,
-          position: "relative",
         }}
       >
         <Icon

@@ -1,353 +1,240 @@
-import React, { use, useEffect } from "react";
-import {
-  TextField,
-  Button,
-  Grid,
-  Box,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Snackbar,
-} from "@mui/material";
-import useFetchApiItems from "@/hooks/useFetchApiItems";
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-
+import Image from "next/image";
 import { axiosInstance } from "@/utils/axiosInstance";
 
-import useCurrentUser from "@/hooks/useCurrentUser";
-
-
-function FoodForm({ title, food, btnText }) {
+export default function Foods() {
+  const [search, setSearch] = useState("");
+  const [filteredFoods, setFilteredFoods] = useState([]);
+  const [user, setUser] = useState(null);
+  const [restaurant, setRestaurant] = useState(null);
+  const [foods, setFoods] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
-  const [isSnackOpen, setIsSnackOpen] = useState(false);
-  const [formData, setFormData] = useState(null);
-  const [category, setCategory] = useState("");
 
-  const { user } = useCurrentUser();
-  console.log(user);
   useEffect(() => {
-    if (food) {
-      setFormData({
-        documentId: food.documentId ?? null,
-        name: food.name,
-        image: food.image,
-        type: food.type?.documentId,
-        price: food.price,
-        comment: food.comment,
-      });
-      setCategory(food.type?.category?.documentId);
-    } else {
-      setFormData(foodInitialValues);
+    if (typeof window !== "undefined") {
+      const storedUser = localStorage.getItem("user");
+      if (storedUser) {
+        const parsedUser = JSON.parse(storedUser);
+        setUser(parsedUser);
+      }
     }
-  }, [food]);
+  }, []);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
-
-  const [categories, isLoading] = useFetchApiItems(
-    user.restaurant
-      ? `/categories?filters[restaurant][documentId][$eq]=${user.restaurant.documentId}`
-      : null
-  );
-
-  const [types, typesLoading] = useFetchApiItems(
-    category ? `/types?filters[category][documentId][$eq]=${category}` : null
-  );
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Form Submitted", formData);
-
-    const values = {
-      data: {
-        // restaurant: restaurant.documentId,
-        name: formData.name,
-        image: formData.image,
-        price: formData.price,
-        comment: formData.comment,
-        type: {
-          connect: [formData.type],
-        },
-        restaurant: user.restaurant?.documentId ?? null,
-      },
+  useEffect(() => {
+    const fetchRestaurant = async () => {
+      if (user?.documentId) {
+        try {
+          const res = await axiosInstance.get(
+            `/restaurants?filters[users][documentId][$eqi]=${user.documentId}`
+          );
+          const found = res.data?.data?.[0] ?? null;
+          setRestaurant(found);
+        } catch (error) {
+          console.error("Restoran olishda xato:", error);
+        }
+      }
     };
+    fetchRestaurant();
+  }, [user]);
 
-    if (formData.documentId) {
-      const options = {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-      };
-      axiosInstance(
-
-      fetch(
-
-        `http://192.168.100.114:1337/api/foods/${formData.documentId}`,
-        options
-      )
-        .then((response) => response.json())
-        .then((res) => {
-          console.log(res);
-          router.push(`/foods/${res.data.documentId}`);
-        })
-        .catch((error) => console.error(error))
-    } else {
-      if (values.data.restaurant) {
-        const options = {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(values),
-        };
-        fetch("http://192.168.100.114:1337/api/foods", options)
-          .then((response) => response.json())
-          .then((res) => {
-            console.log(res);
-            router.push(`/foods/${res.data.documentId}`);
-          })
-          .catch((error) => console.error(error));
+  const fetchFoods = async () => {
+    if (restaurant?.documentId) {
+      setIsLoading(true);
+      try {
+        const res = await axiosInstance.get(
+          `/foods?filters[restaurant][documentId][$eqi]=${restaurant.documentId}&populate[type][populate][0]=category`
+        );
+        setFoods(res.data?.data || []);
+      } catch (error) {
+        console.error("Foods olishda xato:", error);
+      } finally {
+        setIsLoading(false);
       }
     }
   };
 
-  console.log("category", category);
+  useEffect(() => {
+    if (restaurant?.documentId) {
+      fetchFoods();
+    }
+  }, [restaurant]);
 
-  if (!formData) {
-    return null;
-  }
+  useEffect(() => {
+    const result = search
+      ? foods.filter((item) =>
+          item.name?.toLowerCase().includes(search.toLowerCase())
+        )
+      : foods;
+    setFilteredFoods(result);
+  }, [search, foods]);
 
-  console.log("hey", formData);
+  const handleClick = () => router.push("/foods/new");
+
+  const handleDelete = async (foodId) => {
+    try {
+      const res = await fetch(
+        `http://192.168.100.114:1337/api/foods/${foodId}`,
+        { method: "DELETE" }
+      );
+      if (res.ok) {
+        fetchFoods();
+        console.error("Delete failed");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleAction = (action, documentId) => {
+    if (action === "View") router.push(`/foods/${documentId}`);
+    else if (action === "Edit") router.push(`/foods/${documentId}/edit`);
+    else if (action === "Delete") handleDelete(documentId);
+  };
+
+  const image = (item) => {
+    const img = item?.image || "";
+    return img.startsWith("http") || img.endsWith(".jpg") ? img : "/trash.png";
+  };
 
   return (
-    <Box
-      sx={{
-        width: "100%",
-        maxWidth: 800,
-        margin: "auto",
-        padding: 3,
-        backgroundColor: "#f9f9f9",
-        borderRadius: 2,
-        boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
-        marginTop: "30px",
-      }}
-    >
-      <h1
-        style={{
-          color: "#00B074",
-          marginBottom: "30px",
-        }}
-      >
-        {title}
-      </h1>
-      <form onSubmit={handleSubmit}>
-        <Grid container spacing={2}>
-          {/* Name */}
-          <Grid item size={6}>
-            <TextField
-              fullWidth
-              label="Name"
-              variant="outlined"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              sx={{
-                "& .MuiInputLabel-root": {
-                  color: "#00B074",
-                },
-                "& .MuiOutlinedInput-root": {
-                  "& fieldset": {
-                    borderColor: "#00B074",
-                  },
-                  "&:hover fieldset": {
-                    borderColor: "#00B074",
-                  },
-                  "&.Mui-focused fieldset": {
-                    borderColor: "#00B074",
-                  },
-                },
-              }}
-            />
-          </Grid>
+    <>
+      {/* <div style={{ padding: "20px", textAlign: "center" }}>
+        <input
+          type="text"
+          placeholder="Qidirish..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          style={{
+            padding: "10px",
+            borderRadius: "8px",
+            border: "1px solid #ccc",
+            marginRight: "20px",
+          }}
+        />
+        <button onClick={handleClick}>Yangi food qo‘shish</button>
+      </div> */}
 
-          {/* Category */}
-          <Grid item size={6}>
-            <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">Category</InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={category}
-                label="Category"
-                onChange={(e) => setCategory(e.target.value)}
-              >
-                {categories.map((cat) => (
-                  <MenuItem key={cat.id} value={cat.documentId}>
-                    {cat.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Grid>
-
-          {/* Type */}
-          <Grid item size={6}>
-            <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">Type</InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={formData.type}
-                label="Type"
-                onChange={(e) => {
-                  handleChange({
-                    target: {
-                      name: "type",
-                      value: e.target.value,
-                    },
-                  });
-                }}
-              >
-                {[...(types ?? [])].map((type) => (
-                  <MenuItem key={type.id} value={type.documentId}>
-                    {type.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Grid>
-
-          {/* Price */}
-          <Grid item size={6}>
-            <TextField
-              fullWidth
-              label="Price"
-              variant="outlined"
-              name="price"
-              value={formData.price}
-              onChange={handleChange}
-              type="number"
-              sx={{
-                "& .MuiInputLabel-root": {
-                  color: "#00B074",
-                },
-                "& .MuiOutlinedInput-root": {
-                  "& fieldset": {
-                    borderColor: "#00B074",
-                  },
-                  "&:hover fieldset": {
-                    borderColor: "#00B074",
-                  },
-                  "&.Mui-focused fieldset": {
-                    borderColor: "#00B074",
-                  },
-                },
-              }}
-            />
-          </Grid>
-
-          {/* image field */}
-          <Grid item size={12}>
-            <TextField
-              fullWidth
-              label="Image"
-              variant="outlined"
-              name="image"
-              value={formData.image}
-              onChange={handleChange}
-              sx={{
-                "& .MuiInputLabel-root": {
-                  color: "#00B074",
-                },
-                "& .MuiOutlinedInput-root": {
-                  "& fieldset": {
-                    borderColor: "#00B074",
-                  },
-                  "&:hover fieldset": {
-                    borderColor: "#00B074",
-                  },
-                  "&.Mui-focused fieldset": {
-                    borderColor: "#00B074",
-                  },
-                },
-              }}
-            />
-          </Grid>
-
-          {/* Comment */}
-          <Grid item size={12}>
-            <TextField
-              fullWidth
-              label="Comment"
-              variant="outlined"
-              name="comment"
-              value={formData.comment}
-              onChange={handleChange}
-              multiline
-              rows={4}
-              sx={{
-                "& .MuiInputLabel-root": {
-                  color: "#00B074",
-                },
-                "& .MuiOutlinedInput-root": {
-                  "& fieldset": {
-                    borderColor: "#00B074",
-                  },
-                  "&:hover fieldset": {
-                    borderColor: "#00B074",
-                  },
-                  "&.Mui-focused fieldset": {
-                    borderColor: "#00B074",
-                  },
-                },
-              }}
-            />
-          </Grid>
-
-          <Grid item xs={12}>
-            <Button
-              type="submit"
-              variant="contained"
-              sx={{
-                backgroundColor: "#00B074",
-                "&:hover": {
-                  backgroundColor: "#009d60",
-                },
-                padding: "14px",
-                fontSize: "16px",
+      {isLoading ? (
+        <p style={{ textAlign: "center" }}>Yuklanmoqda...</p>
+      ) : filteredFoods.length > 0 ? (
+        <div
+          style={{
+            maxWidth: "1460px",
+            padding: "40px 20px",
+            display: "flex",
+            flexWrap: "wrap",
+            gap: "40px",
+          }}
+        >
+          {filteredFoods.map((item) => (
+            <div
+              key={item.id}
+              style={{
+                width: "276px",
+                minHeight: "340px",
+                borderRadius: "14px",
+                backgroundColor: "#fff",
+                boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
+                position: "relative",
+                paddingTop: "100px",
+                textAlign: "center",
               }}
             >
-              {btnText}
-            </Button>
-          </Grid>
-        </Grid>
-      </form>
-      <Snackbar
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-        open={isSnackOpen}
-        onClose={() => setIsSnackOpen(false)}
-        message="Food is created"
-      />
-    </Box>
+              <div
+                style={{
+                  position: "absolute",
+                  top: "-50px",
+                  left: "50%",
+                  transform: "translateX(-50%)",
+                  width: "160px",
+                  height: "160px",
+                  backgroundColor: "white",
+                  borderRadius: "50%",
+                  overflow: "hidden",
+                  marginTop: "15px",
+                  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+                }}
+              >
+                <Image
+                  width={160}
+                  height={160}
+                  src={image(item)}
+                  alt={item.name}
+                  style={{ objectFit: "contain" }}
+                />
+              </div>
+              <div style={{ padding: "20px" }}>
+                <h3
+                  style={{
+                    fontWeight: "700",
+                    fontSize: "18px",
+                    marginTop: "10px",
+                  }}
+                >
+                  {item.name}
+                </h3>
+                <p
+                  style={{
+                    color: "#00B074",
+                    fontSize: "14px",
+                    marginBottom: "20px",
+                  }}
+                >
+                  {item.type?.category?.name} / {item.type?.name}
+                </p>
+                <div
+                  style={{ display: "flex", justifyContent: "space-around" }}
+                >
+                  {Array.isArray(icons) &&
+                    icons.map((icon) => (
+                      <div
+                        key={icon.id}
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          gap: "4px",
+                        }}
+                      >
+                        <button
+                          style={{
+                            border: "none",
+                            borderRadius: "12px",
+                            backgroundColor: "#00B0741A",
+                            padding: "8px",
+                          }}
+                          onClick={() =>
+                            handleAction(icon.name, item.documentId)
+                          }
+                        >
+                          <Image
+                            src={icon.img}
+                            alt={icon.name}
+                            width={24}
+                            height={24}
+                          />
+                        </button>
+                        <span
+                          style={{
+                            fontSize: "12px",
+                            color: "#5E6E89",
+                            fontWeight: "500",
+                          }}
+                        >
+                          {icon.name}
+                        </span>
+                      </div>
+                    ))}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <h1 style={{ textAlign: "center" }}>Food topilmadi!</h1>
+      )}
+    </>
   );
 }
-
-export default FoodForm;
-
-const foodInitialValues = {
-  documentId: null,
-  name: "",
-  image: "",
-  type: "",
-  price: "",
-  comment: "",
-};

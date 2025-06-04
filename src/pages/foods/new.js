@@ -20,7 +20,11 @@ export default function New() {
         <title>Create New Food</title>
       </Head>
       <div>
-        <FoodForm title={"Create new food"} food={food} btnText={"Create new Food"} />
+        <FoodForm
+          title={"Create new food"}
+          food={food}
+          btnText={"Create new Food"}
+        />
       </div>
     </>
   );

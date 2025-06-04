@@ -7,60 +7,65 @@ import FoodMapSkeleton from "@/components/pages/foods/FoodMapSkeleton";
 import FoodSearch from "@/components/pages/foods/FoodSearch";
 import FoodBtn from "@/components/pages/foods/FoodBtn";
 import NewBtn from "@/components/pages/foods/NewBtn";
-import useFetchApiItems from "@/hooks/useFetchApiItems";
 import useCurrent from "@/hooks/useCurrentUser";
+import { axiosInstance } from "@/utils/axiosInstance";
 
 export default function Foods() {
   const [searchValue, setSearchValue] = useState("");
   const [filteredFoods, setFilteredFoods] = useState([]);
   const [selected, setSelected] = useState("left");
+  const [foods, setFoods] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [hasFetched, setHasFetched] = useState(false);
 
   const user = useCurrent();
+  const [restaurant, setRestaurant] = useState(null);
 
-  const [restaurants, isResLoading] = useFetchApiItems(
-    "/restaurants",
-    user && {
-      filters: {
-        users: {
-          documentId: user.documentId,
-        },
-        key: "users",
-      },
-    }
-  );
-
-  const foundRestaurant = restaurants[0] ?? null;
-
-  const [foods, isLoading, refetch] = useFetchApiItems(
-    "/foods",
-    foundRestaurant && {
-      filters: {
-        restaurant: {
-          documentId: foundRestaurant.documentId,
-        },
-        key: "restaurant",
-      },
-      populate: {
-        type: {
-          populate: ["category"],
-        },
-        restaurant: true,
-      },
-    }
-  );
-
-  // faqat bitta marta fetch qilish uchun
+  // Foydalanuvchiga tegishli restoran topiladi
   useEffect(() => {
-    if (foundRestaurant && !hasFetched) {
+    const fetchRestaurant = async () => {
+      if (user?.documentId) {
+        try {
+          const res = await axiosInstance.get(
+            `/restaurants?filters[users][documentId][$eqi]=${user.documentId}`
+          );
+          setRestaurant(res.data.data?.[0] || null);
+        } catch (err) {
+          console.error("Restoran yuklashda xato:", err);
+        }
+      }
+    };
+    fetchRestaurant();
+  }, [user]);
+
+  // Restoran asosida foods fetch qilinadi
+  const fetchFoods = async () => {
+    if (restaurant?.documentId) {
+      setIsLoading(true);
+      try {
+        const res = await axiosInstance.get(
+          `/foods?filters[restaurant][documentId][$eqi]=${restaurant.documentId}&populate[type][populate][0]=category`
+        );
+        setFoods(res.data.data || []);
+      } catch (err) {
+        console.error("Foodsni yuklashda xato:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  };
+
+  // Faqat bir marta fetch qilish uchun
+  useEffect(() => {
+    if (restaurant && !hasFetched) {
       setHasFetched(true);
-      refetch(); // faqat bir marta chaqiriladi
+      fetchFoods();
     }
-  }, [foundRestaurant]);
+  }, [restaurant]);
 
-  // qidiruv uchun filtr
+  // Qidiruv uchun filtr
   useEffect(() => {
-    if (searchValue.length > 0 && foods) {
+    if (searchValue.length > 0 && foods.length > 0) {
       const filtered = foods.filter((item) => {
         const name = typeof item.name === "object" ? item.name.uz : item.name;
         return name?.toLowerCase().includes(searchValue.toLowerCase());
@@ -96,19 +101,19 @@ export default function Foods() {
           </div>
         </div>
 
-        {!isLoading && foundRestaurant ? (
+        {!isLoading && restaurant ? (
           searchValue.length > 0 ? (
             filteredFoods.length > 0 ? (
               <FoodsMap
                 data={filteredFoods}
-                refetch={refetch}
+                refetch={fetchFoods}
                 selected={selected}
               />
             ) : (
               <h1 style={{ textAlign: "center" }}>Food topilmadi!</h1>
             )
           ) : (
-            <FoodsMap data={foods} refetch={refetch} selected={selected} />
+            <FoodsMap data={foods} refetch={fetchFoods} selected={selected} />
           )
         ) : (
           <FoodMapSkeleton count={3} />
