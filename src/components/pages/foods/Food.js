@@ -80,10 +80,6 @@ export default function Foods() {
     return img.startsWith("http") || img.endsWith(".jpg") ? img : "/trash.png";
   };
 
-  if (userLoading || isLoading) {
-    return <p style={{ textAlign: "center" }}>Yuklanmoqda...</p>;
-  }
-
   return (
     <>
       <HeaderInput

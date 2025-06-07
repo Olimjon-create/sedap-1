@@ -6,13 +6,49 @@ import FoodSearch from "@/components/pages/foods/FoodSearch";
 import NewBtn from "@/components/pages/foods/NewBtn";
 import { useRouter } from "next/router";
 import FoodDetailComponent from "@/components/pages/foods/FoodDetailComponent";
-import useFetchApiItems from "@/hooks/useFetchApiItems";
+import axios from "axios";
 
-export default function FoodDetail() {
+export default function FoodDetailPage() {
   const router = useRouter();
-  const [food, isLoading] = useFetchApiItems(
-    `/foods/${router.query.documentId}?populate[type][populate][0]=category`
-  );
+  const [food, setFood] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const { documentId } = router.query;
+
+    if (!documentId) return;
+
+    setIsLoading(true);
+
+    axios
+      .get(
+        `http://192.168.100.114:1337/api/foods/${documentId}?populate[type][populate][0]=category`
+      )
+      .then((res) => {
+        const data = res.data.data;
+        if (data) {
+          setFood({
+            ...data.attributes,
+            documentId: data.id,
+            type: {
+              ...data.attributes.type?.data?.attributes,
+              documentId: data.attributes.type?.data?.id,
+              category: {
+                ...data.attributes.type?.data?.attributes?.category?.data
+                  ?.attributes,
+                documentId:
+                  data.attributes.type?.data?.attributes?.category?.data?.id,
+              },
+            },
+          });
+        }
+      })
+      .catch((err) => {
+        console.error("Failed to fetch food", err);
+        setFood(null);
+      })
+      .finally(() => setIsLoading(false));
+  }, [router.query.documentId]);
 
   return (
     <>
@@ -50,14 +86,19 @@ export default function FoodDetail() {
           </div>
         </div>
 
-        {food ? <FoodDetailComponent data={food} /> : <p>Failed</p>}
+        {isLoading ? (
+          <p>Loading...</p>
+        ) : food ? (
+          <FoodDetailComponent data={food} />
+        ) : (
+          <p>Failed to load food data.</p>
+        )}
       </div>
     </>
   );
 }
-
-FoodDetail.getLayout = (pageProps) => (
+FoodDetailPage.getLayout = (pageProps) => (
   <MainLayout>
-    <FoodDetail {...pageProps} />
+    <FoodDetailPage {...pageProps} />
   </MainLayout>
 );

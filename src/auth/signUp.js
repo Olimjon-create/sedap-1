@@ -3,8 +3,6 @@ import { axiosInstance } from "@/utils/axiosInstance";
 export default async function signUp(data) {
   const { email, password, username } = data;
   try {
-    // Request API.
-    // fetch
     const data = await axiosInstance
       .post("/auth/local/register", {
         email: email,

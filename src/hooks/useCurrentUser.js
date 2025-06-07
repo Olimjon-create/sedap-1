@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-
+import axios from "axios";
 export default function useCurrentUser() {
   const [user, setUser] = useState(null);
   const [restaurant, setRestaurant] = useState(null);
@@ -19,7 +19,7 @@ export default function useCurrentUser() {
 
       setIsResLoading(true);
       try {
-        const res = await fetch(
+        const res = await axios(
           `/restaurants?filters[users][documentId][$eqi]=${user.documentId}`
         );
         const data = await res.json();
@@ -29,7 +29,7 @@ export default function useCurrentUser() {
           setRestaurant(null);
         }
       } catch (error) {
-        console.error("Restaurant fetch error:", error);
+        console.error("Restaurant axios error:", error);
         setRestaurant(null);
       } finally {
         setIsResLoading(false);

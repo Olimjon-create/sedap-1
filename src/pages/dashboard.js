@@ -3,6 +3,7 @@ import Image from "next/image";
 import MainLayout from "@/components/common/layouts/MainLayout";
 import { useEffect, useState } from "react";
 import useCurrent from "@/hooks/useCurrentUser";
+import axios from "axios";
 
 export default function Dashboard() {
   const user = useCurrent();
@@ -11,7 +12,6 @@ export default function Dashboard() {
   const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Kategoriyalarni fetch qilish
   const realRefetch = async (url) => {
     if (!url) return;
     setIsLoading(true);
@@ -63,7 +63,7 @@ export default function Dashboard() {
     };
 
     ["113", "114", "84"].forEach((ip) => {
-      fetch(`http://192.168.100.${ip}:1337/api/categories`, options)
+      axios(`http://192.168.100.114:1337/api/categories`, options)
         .then((response) => response.json())
         .then((res) => {
           console.log("Category yaratildi:", res);
@@ -100,7 +100,7 @@ export default function Dashboard() {
     };
 
     ["113", "114", "84"].forEach((ip) => {
-      fetch(`http://192.168.100.${ip}:1337/api/types`, options)
+      axios(`http://192.168.100.${ip}:1337/api/types`, options)
         .then((response) => response.json())
         .then((res) => {
           console.log("Type yaratildi:", res);
@@ -125,19 +125,13 @@ export default function Dashboard() {
           Create Type
         </button>
 
-        {isLoading ? (
-          <p style={{ textAlign: "center", marginTop: "20px" }}>
-            Yuklanmoqda...
-          </p>
-        ) : (
-          <Image
-            src="/dashboard.png"
-            width={1460}
-            height={1544}
-            alt="dashboard"
-            style={{ marginTop: "20px" }}
-          />
-        )}
+        <Image
+          src="/dashboard.png"
+          width={1460}
+          height={1544}
+          alt="dashboard"
+          style={{ marginTop: "20px" }}
+        />
       </div>
     </>
   );

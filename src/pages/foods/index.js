@@ -21,7 +21,6 @@ export default function Foods() {
   const user = useCurrent();
   const [restaurant, setRestaurant] = useState(null);
 
-  // Foydalanuvchiga tegishli restoran topiladi
   useEffect(() => {
     const fetchRestaurant = async () => {
       if (user?.documentId) {
@@ -38,7 +37,6 @@ export default function Foods() {
     fetchRestaurant();
   }, [user]);
 
-  // Restoran asosida foods fetch qilinadi
   const fetchFoods = async () => {
     if (restaurant?.documentId) {
       setIsLoading(true);
@@ -55,7 +53,6 @@ export default function Foods() {
     }
   };
 
-  // Faqat bir marta fetch qilish uchun
   useEffect(() => {
     if (restaurant && !hasFetched) {
       setHasFetched(true);
@@ -63,7 +60,6 @@ export default function Foods() {
     }
   }, [restaurant]);
 
-  // Qidiruv uchun filtr
   useEffect(() => {
     if (searchValue.length > 0 && foods.length > 0) {
       const filtered = foods.filter((item) => {
@@ -82,19 +78,22 @@ export default function Foods() {
         <title>Foods</title>
       </Head>
 
-      <div>
+      <div style={{ padding: "24px" }}>
         <div
           style={{
             display: "flex",
+            flexWrap: "wrap",
             alignItems: "center",
             justifyContent: "space-between",
+            gap: "16px",
+            marginBottom: "24px",
           }}
         >
           <PageTitle
             title="Foods"
-            subtitle="Here is your menus summary with graph view"
+            subtitle="Manage your menu and view items visually"
           />
-          <div style={{ display: "flex", alignItems: "center", gap: "26px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
             <FoodSearch onChange={setSearchValue} />
             <FoodBtn selected={selected} onSelect={setSelected} />
             <NewBtn />
@@ -110,7 +109,12 @@ export default function Foods() {
                 selected={selected}
               />
             ) : (
-              <h1 style={{ textAlign: "center" }}>Food topilmadi!</h1>
+              <div style={{ textAlign: "center", padding: "40px 0" }}>
+                <h2 style={{ fontSize: "20px", color: "#999" }}>
+                  Hech qanday ovqat topilmadi 😕
+                </h2>
+                <p>Qidiruv so‘zingizni tekshiring yoki boshqa so‘z kiriting.</p>
+              </div>
             )
           ) : (
             <FoodsMap data={foods} refetch={fetchFoods} selected={selected} />

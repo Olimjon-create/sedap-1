@@ -3,20 +3,16 @@ import MainLayout from "@/components/common/layouts/MainLayout";
 import Head from "next/head";
 import FoodForm from "@/components/pages/foods/FoodForm";
 import { useRouter } from "next/router";
-import useFetchApiItems from "@/hooks/useFetchApiItems";
 
 export default function FoodEdit() {
   const router = useRouter();
-  const [food, isLoading] = useFetchApiItems(
-    `/foods/${router.query.documentId}?populate[type][populate][0]=category`
-  );
 
   return (
     <>
       <Head>
         <title>Food Edit</title>
       </Head>
-      <FoodForm title={"Edit food"} food={food} btnText={"Edit Food"} />
+      <FoodForm title={"Edit food"} btnText={"Edit Food"} />
     </>
   );
 }

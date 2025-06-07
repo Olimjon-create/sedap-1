@@ -1,23 +1,80 @@
 import { useEffect, useState } from "react";
 import { axiosInstance } from "@/utils/axiosInstance";
+const ROOT_PATH = "/categories";
 import useCurrentUser from "./useCurrentUser";
 
-const ROOT_PATH = "/categories";
-const INTERNAL_NAME = "BehruzRes"; // internalName ni doimiy qilish
-
-export default function useCategories() {
+export default function useCategory() {
   const [isLoading, setIsLoading] = useState(true);
   const [categories, setCategories] = useState([]);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState();
   const user = useCurrentUser();
 
   useEffect(() => {
-    if (user?.restaurantId) {
-      fetchCategories();
+    if (user) {
+      axiosInstance
+        .get(
+          `${ROOT_PATH}?filters[restaurant][documentId][$eq]=${user.restaurantId}`
+        )
+        .then((response) => {
+          setCategories(response.data.data);
+        })
+        .catch((error) => {
+          console.log("error", error);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
     }
   }, [user]);
 
-  const fetchCategories = () => {
+  const createCategory = (data) => {
+    if (data) {
+      const values = {
+        data: {
+          name: data.name,
+          description: data.description,
+          internalName: `OlimjonXamraqulov${data.name}`,
+          restaurant: user?.restaurantId,
+        },
+      };
+
+      axiosInstance
+        .post(ROOT_PATH, values)
+        .then((res) => {
+          console.log("Success:", res.data.data);
+          setCategories(res.data.data);
+          reFetch();
+        })
+        .catch((error) => {
+          console.error("Error creating category:", error);
+          setError(error);
+        });
+    } else {
+      console.error("restaurantId topilmadi");
+    }
+  };
+
+  const getCategory = async (documentId) => {
+    const cat = axiosInstance
+      .get(ROOT_PATH + "/" + documentId)
+      .then((res) => res.data.data)
+      .catch((err = console.error(error)));
+    return cat;
+  };
+
+  const deletyCategory = async (documentId) => {
+    axiosInstance
+      .delete(`${ROOT_PATH}/${documentId}`)
+      .then((res) => {
+        console.log(res, "res");
+        reFetch();
+      })
+      .catch((err) => {
+        setError(err);
+      });
+  };
+
+  const reFetch = () => {
     setIsLoading(true);
     axiosInstance
       .get(
@@ -28,56 +85,9 @@ export default function useCategories() {
       .finally(() => setIsLoading(false));
   };
 
-  const createCategory = (data) => {
-    if (!data || !user?.restaurantId) {
-      console.error("Data yoki restaurantId topilmadi");
-      return;
-    }
-
-    const values = {
-      data: {
-        name: data.name,
-        description: data.description,
-        internalName: INTERNAL_NAME,
-        restaurant: user.restaurantId,
-      },
-    };
-
-    axiosInstance
-      .post(ROOT_PATH, values)
-      .then((res) => {
-        console.log("Success:", res.data.data);
-        fetchCategories();
-      })
-      .catch((error) => {
-        console.error("Error creating category:", error);
-        setError(error);
-      });
-  };
-
-  const getCategory = async (documentId) => {
-    try {
-      const res = await axiosInstance.get(`${ROOT_PATH}/${documentId}`);
-      return res.data.data;
-    } catch (err) {
-      console.error("Error fetching category:", err);
-      setError(err);
-    }
-  };
-
-  const deleteCategory = async (documentId) => {
-    try {
-      await axiosInstance.delete(`${ROOT_PATH}/${documentId}`);
-      fetchCategories();
-    } catch (err) {
-      console.error("Error deleting category:", err);
-      setError(err);
-    }
-  };
-
   const updateCategory = async (data) => {
-    if (!data?.documentId || !user?.restaurantId) {
-      console.error("documentId yoki restaurantId topilmadi");
+    if (!data?.documentId) {
+      console.error("documentId topilmadi");
       return;
     }
 
@@ -85,8 +95,8 @@ export default function useCategories() {
       data: {
         name: data.name,
         description: data.description,
-        internalName: INTERNAL_NAME,
-        restaurant: data.restaurantId || user.restaurantId,
+        internalName: `Asliddin_${data.name}`,
+        restaurant: data.restaurantId || data?.restaurantId,
       },
     };
 
@@ -94,7 +104,7 @@ export default function useCategories() {
       .put(`${ROOT_PATH}/${data.documentId}`, values)
       .then((res) => {
         console.log("Updated:", res.data);
-        fetchCategories();
+        reFetch();
       })
       .catch((error) => {
         console.error("Xatolik:", error);
@@ -107,13 +117,13 @@ export default function useCategories() {
       categories,
       isLoading,
       error,
-      reFetch: fetchCategories,
+      reFetch,
     },
     {
       getCategory,
       createCategory,
+      deletyCategory,
       updateCategory,
-      deleteCategory,
     },
   ];
 }

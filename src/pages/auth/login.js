@@ -1,314 +1,205 @@
-// // pages/login.js
-// import React, { useState } from "react";
-// import Link from "next/link";
-// import { useRouter } from "next/router";
-
-// import {
-//   Avatar,
-//   Button,
-//   TextField,
-//   FormControlLabel,
-//   Checkbox,
-//   Grid,
-//   Alert,
-//   Box,
-//   Snackbar,
-//   FormControl,
-//   InputLabel,
-//   OutlinedInput,
-//   InputAdornment,
-//   IconButton,
-// } from "@mui/material";
-// import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-// import { Visibility, VisibilityOff } from "@mui/icons-material";
-// import AuthLayout from "../../components/AuthLayout";
-
-// export default function LoginPage() {
-//   const router = useRouter();
-//   const [email, setEmail] = useState(router.query?.email ?? "");
-//   const [password, setPassword] = useState("");
-//   const [error, setError] = useState("");
-//   const [loading, setLoading] = useState(false);
-
-//   console.log("router", router);
-
-//   async function handleSubmit(event) {
-//     event.preventDefault();
-
-//     const formData = new FormData(event.currentTarget); // { get: (attrName) => { return form[attrName] } }
-//     const email = formData.get("email"); // 'test@mail.com'
-//     const password = formData.get("password"); // 'errer3r3r3'
-
-//     const response = await fetch("/api/auth/login", {
-//       method: "POST",
-//       headers: { "Content-Type": "application/json" },
-//       body: JSON.stringify({ email, password }),
-//     });
-
-//     if (response.ok) {
-//       const res = await response.json();
-//       const { user, jwt } = res.body;
-//       localStorage.setItem("user", JSON.stringify(user));
-//       localStorage.setItem("jwt", jwt);
-//       router.push("/dashboard");
-//     } else {
-//       // console.log('res err', response.body.error)
-//       // Handle errors
-//     }
-//   }
-
-//   const [showPassword, setShowPassword] = React.useState(false);
-
-//   const handleClickShowPassword = () => setShowPassword((show) => !show);
-
-//   const handleMouseDownPassword = (event) => {
-//     event.preventDefault();
-//   };
-
-//   const handleMouseUpPassword = (event) => {
-//     event.preventDefault();
-//   };
-
-//   return (
-//     <AuthLayout title="Tizimga kirish">
-//       <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-//         <LockOutlinedIcon />
-//       </Avatar>
-
-//       {error && (
-//         <Alert severity="error" sx={{ width: "100%", mb: 2 }}>
-//           {error}
-//         </Alert>
-//       )}
-
-//       <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-//         <TextField
-//           margin="normal"
-//           required
-//           fullWidth
-//           id="email"
-//           label="Email Manzil"
-//           name="email"
-//           autoComplete="email"
-//           autoFocus
-//           value={email}
-//           onChange={(e) => setEmail(e.target.value)}
-//         />
-
-//         <FormControl margin="normal" required fullWidth variant="outlined">
-//           <InputLabel htmlFor="outlined-adornment-password">Parol</InputLabel>
-//           <OutlinedInput
-//             id="outlined-adornment-password"
-//             name="password" // <-- kerakli joy
-//             type={showPassword ? "text" : "password"}
-//             value={password}
-//             onChange={(e) => setPassword(e.target.value)}
-//             endAdornment={
-//               <InputAdornment position="end">
-//                 <IconButton
-//                   aria-label={
-//                     showPassword ? "hide the password" : "display the password"
-//                   }
-//                   onClick={handleClickShowPassword}
-//                   onMouseDown={handleMouseDownPassword}
-//                   onMouseUp={handleMouseUpPassword}
-//                   edge="end"
-//                 >
-//                   {showPassword ? <VisibilityOff /> : <Visibility />}
-//                 </IconButton>
-//               </InputAdornment>
-//             }
-//             label="Parol"
-//           />
-//         </FormControl>
-
-//         <FormControlLabel
-//           control={<Checkbox value="remember" color="primary" />}
-//           label="Eslab qolish"
-//         />
-
-//         <Button
-//           type="submit"
-//           fullWidth
-//           variant="contained"
-//           sx={{ mt: 3, mb: 2 }}
-//           disabled={loading}
-//         >
-//           {loading ? "Kirilmoqda..." : "Kirish"}
-//         </Button>
-
-//         <Grid container>
-//           <Grid item xs>
-//             <Link href="/forgot-password" passHref>
-//               <Button variant="text" size="small">
-//                 Parolni unutdingizmi?
-//               </Button>
-//             </Link>
-//           </Grid>
-//           <Grid item>
-//             <Link href="/auth/register" passHref>
-//               <Button variant="text" size="small">
-//                 {"Hisobingiz yo'qmi? Ro'yxatdan o'tish"}
-//               </Button>
-//             </Link>
-//           </Grid>
-//         </Grid>
-//       </Box>
-//     </AuthLayout>
-//   );
-// }
-// pages/login.js
 import React, { useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import {
-  Avatar,
-  Button,
-  TextField,
-  FormControlLabel,
-  Checkbox,
-  Grid,
-  Alert,
   Box,
-  FormControl,
-  InputLabel,
-  OutlinedInput,
-  InputAdornment,
-  IconButton,
+  TextField,
+  Button,
+  Typography,
+  Paper,
+  Alert,
 } from "@mui/material";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
-import AuthLayout from "../../components/AuthLayout";
+import Link from "next/link";
+import AuthLayout from "@/components/AuthLayout";
 
-export default function LoginPage() {
-  const router = useRouter();
-  const [email, setEmail] = useState(router.query?.email ?? "");
+export default function LogIn() {
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter();
 
   async function handleSubmit(event) {
     event.preventDefault();
-    setLoading(true);
-    setError("");
-
-    const formData = new FormData(event.currentTarget);
-    const email = formData.get("email");
-    const password = formData.get("password");
 
     try {
+      setLoading(true);
       const response = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
 
-      if (!response.ok) {
-        const err = await response.json();
-        setError(err.message || "Login jarayonida xatolik yuz berdi");
-        setLoading(false);
-        return;
+      if (response.ok) {
+        const res = await response.json();
+        const { user, jwt } = res.body;
+
+        localStorage.setItem("user", JSON.stringify(user));
+        localStorage.setItem("jwt", jwt);
+        router.push("/dashboard");
+      } else {
+        setError("qaytadan tekshir");
       }
-
-      const res = await response.json();
-      const { user, jwt } = res.body;
-
-      localStorage.setItem("user", JSON.stringify(user));
-      localStorage.setItem("jwt", jwt);
-      router.push("/dashboard");
-    } catch (e) {
-      setError("Tarmoqda xatolik yuz berdi");
+    } catch (err) {
+      setError("An error occurred while logging in");
+    } finally {
       setLoading(false);
     }
   }
 
-  const handleClickShowPassword = () => setShowPassword((show) => !show);
-  const handleMouseDownPassword = (event) => event.preventDefault();
-
   return (
-    <AuthLayout title="Tizimga kirish">
-      <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-        <LockOutlinedIcon />
-      </Avatar>
+    <AuthLayout>
+      <Box
+        component="form"
+        onSubmit={handleSubmit}
+        noValidate
+        sx={{
+          backgroundImage: "url('/blue.png')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          width: "100vw",
+          minHeight: "100vh",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          flexDirection: "column",
+          paddingTop: 4,
+        }}
+      >
+        <Paper
+          elevation={6}
+          sx={{
+            padding: 4,
+            maxWidth: "500px",
+            width: "100%",
+            display: "flex",
+            flexDirection: "column",
+            gap: 3,
+            borderRadius: 5,
+            backgroundColor: "rgba(255, 255, 255, 0.1)",
+            border: "none",
+            boxShadow: "0 4px 10px rgba(0, 0, 0, 0.2)",
+            backdropFilter: "blur(10px)",
+          }}
+        >
+          {error && (
+            <Alert severity="error" sx={{ width: "100%" }}>
+              {error}
+            </Alert>
+          )}
 
-      {error && (
-        <Alert severity="error" sx={{ width: "100%", mb: 2 }}>
-          {error}
-        </Alert>
-      )}
+          <Box
+            sx={{
+              width: 150,
+              height: 150,
+              borderRadius: "50%",
+              margin: "0 auto",
+              backgroundColor: "white",
+              border: "4px solid rgba(0, 0, 0, 0.2)",
+              boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
+              transition: "transform 0.2s, box-shadow 0.2s",
+              "&:hover": {
+                transform: "scale(1.1)",
+                boxShadow: "0 8px 15px rgba(0, 0, 0, 0.2)",
+              },
+            }}
+          />
 
-      <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-        <TextField
-          margin="normal"
-          required
-          fullWidth
-          id="email"
-          label="Email Manzil"
-          name="email"
-          autoComplete="email"
-          autoFocus
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
+          <Typography
+            variant="h4"
+            align="center"
+            fontWeight="bold"
+            sx={{ color: "white" }}
+          >
+            Log In
+          </Typography>
 
-        <FormControl margin="normal" required fullWidth variant="outlined">
-          <InputLabel htmlFor="outlined-adornment-password">Parol</InputLabel>
-          <OutlinedInput
-            id="outlined-adornment-password"
-            name="password"
-            type={showPassword ? "text" : "password"}
+          <TextField
+            label="Email"
+            placeholder="Enter your email"
+            variant="outlined"
+            fullWidth
+            id="email"
+            name="email"
+            value={email}
+            autoComplete="email"
+            onChange={(e) => setEmail(e.target.value)}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "10px",
+              },
+              "& label": {
+                color: "white",
+                marginTop: "-30px",
+                fontSize: "28px",
+                fontFamily: "sans-serif",
+              },
+              "& .MuiInputBase-input": {
+                color: "white",
+              },
+              "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+                borderColor: "white",
+              },
+            }}
+          />
+
+          <TextField
+            label="Password"
+            placeholder="Enter your password"
+            type="password"
+            variant="outlined"
+            fullWidth
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            endAdornment={
-              <InputAdornment position="end">
-                <IconButton
-                  aria-label={
-                    showPassword ? "parolni yashirish" : "parolni ko‘rsatish"
-                  }
-                  onClick={handleClickShowPassword}
-                  onMouseDown={handleMouseDownPassword}
-                  edge="end"
-                >
-                  {showPassword ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </InputAdornment>
-            }
-            label="Parol"
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                marginTop: "40px",
+                borderRadius: "10px",
+              },
+              "& label": {
+                color: "white",
+                fontSize: "28px",
+                fontFamily: "sans-serif",
+                marginTop: "10px",
+              },
+              "& .MuiInputBase-input": {
+                color: "white",
+              },
+              "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+                borderColor: "white",
+              },
+            }}
           />
-        </FormControl>
 
-        <FormControlLabel
-          control={<Checkbox value="remember" color="primary" />}
-          label="Eslab qolish"
-        />
+          <Button
+            variant="contained"
+            type="submit"
+            color="primary"
+            fullWidth
+            disabled={loading}
+            sx={{
+              padding: "12px",
+              fontWeight: "bold",
+              "&:hover": {
+                backgroundColor: "blue",
+                boxShadow: "0 4px 10px rgba(0, 0, 0, 0.2)",
+              },
+              color: "white",
+            }}
+          >
+            {loading ? "Kirilmoqda..." : "Kirish"}
+          </Button>
 
-        <Button
-          type="submit"
-          fullWidth
-          variant="contained"
-          sx={{ mt: 3, mb: 2 }}
-          disabled={loading}
-        >
-          {loading ? "Kirilmoqda..." : "Kirish"}
-        </Button>
-
-        <Grid container>
-          <Grid item xs>
-            <Link href="/forgot-password" passHref>
-              <Button variant="text" size="small">
-                Parolni unutdingizmi?
-              </Button>
-            </Link>
-          </Grid>
-          <Grid item>
+          <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
             <Link href="/auth/register" passHref>
-              <Button variant="text" size="small">
-                Hisobingiz yo‘qmi? Ro'yxatdan o'tish
-              </Button>
+              <Typography
+                variant="body2"
+                sx={{ cursor: "pointer", color: "skyblue" }}
+              >
+                Forgot Password?
+              </Typography>
             </Link>
-          </Grid>
-        </Grid>
+          </Box>
+        </Paper>
       </Box>
     </AuthLayout>
   );
