@@ -1,22 +1,23 @@
 import React from "react";
 import Image from "next/image";
 import styles from "@/styles/customerDetail.module.css";
+import { Box } from "@mui/material";
 function CreditCard(props) {
   const { card } = props;
   return (
-    <div
+    <Box
       style={{
         width: "457px",
         backgroundColor: "#00B074",
         borderRadius: "16px",
       }}
     >
-      <div
+      <Box
         style={{
           padding: "25px 37px 0 37px",
         }}
       >
-        <div
+        <Box
           style={{
             display: "flex",
             alignItems: "center",
@@ -44,7 +45,7 @@ function CreditCard(props) {
               alt="gg"
             ></Image>
           </button>
-        </div>
+        </Box>
         <h1
           style={{
             color: "#FFFFFF",
@@ -92,8 +93,8 @@ function CreditCard(props) {
             {card.exp}
           </p>
         </div>
-      </div>
-      <div
+      </Box>
+      <Box
         style={{
           display: "flex",
           alignItems: "center",
@@ -105,7 +106,7 @@ function CreditCard(props) {
           borderBottomRightRadius: "16px",
         }}
       >
-        <div>
+        <Box>
           <p
             style={{
               fontWeight: "400",
@@ -130,10 +131,10 @@ function CreditCard(props) {
           >
             {card.owner}
           </p>
-        </div>
+        </Box>
         <Image src={"/cardIcon.png"} width={60} height={57} alt="card" />
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 }
 

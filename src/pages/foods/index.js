@@ -8,6 +8,7 @@ import FoodMapSkeleton from "@/components/pages/foods/FoodMapSkeleton";
 import FoodSearch from "@/components/pages/foods/FoodSearch";
 import FoodSelect from "@/components/pages/foods/FoodSelect";
 import NewBtn from "@/components/pages/foods/NewBtn";
+import { Box } from "@mui/material";
 
 export default function Foods() {
   const [foods, setFoods] = useState(null);
