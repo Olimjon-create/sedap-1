@@ -32,6 +32,8 @@ export default function CustomerDetail() {
           {currentCustomer
             ? "Order Detail: " + currentCustomer.customerId
             : "Tovar not found"}
+          if(!currentCustomer){" "}
+          {console.log(currentCustomer, "setCurrentCustomer")}
         </title>
       </Head>
       <div>

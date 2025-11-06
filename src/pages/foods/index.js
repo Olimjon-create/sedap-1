@@ -1,5 +1,5 @@
 import Head from "next/head";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import MainLayout from "@/components/common/layouts/MainLayout";
 import PageTitle from "@/components/common/PageTitle";
 import { foodData } from "@/data";
@@ -8,7 +8,6 @@ import FoodMapSkeleton from "@/components/pages/foods/FoodMapSkeleton";
 import FoodSearch from "@/components/pages/foods/FoodSearch";
 import FoodSelect from "@/components/pages/foods/FoodSelect";
 import NewBtn from "@/components/pages/foods/NewBtn";
-import { Box } from "@mui/material";
 
 export default function Foods() {
   const [foods, setFoods] = useState(null);
